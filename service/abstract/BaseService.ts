@@ -124,6 +124,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         options: {
             page?: number,
             size?: number,
+            sort?: any,
             projection?: any
         } = {
             page: 1,
@@ -138,14 +139,17 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         let pipe: any = [
             {
                 $match: filter
-            },
+            }
+        ]
+        if (options.sort) pipe.push({$sort: options.sort});
+        pipe.push(
             {
                 $skip: (options.page - 1) * options.size
             },
             {
                 $limit: options.size
             }
-        ]
+        );
         if (options.projection) pipe.push({$project: options.projection});
         rs.data = await this.aggregate(pipe);
         return rs;
@@ -165,7 +169,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
      * @param filter
      * @param options
      */
-    async getAll(filter: any = {}, options: any = {}): Promise<E[]> {
+    async find(filter: any = {}, options: any = {}): Promise<E[]> {
         return await this.dao.find(filter, options);
     }
 
