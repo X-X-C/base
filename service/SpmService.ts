@@ -48,9 +48,10 @@ export default class SpmService extends BaseService<SpmDao<Spm>, Spm> {
      * 新增统计
      * @param type
      * @param data
+     * @param ext
      */
-    async addSpm(type: string, data?): Promise<string> {
-        let spm = await this.bean(type, data);
+    async addSpm(type: string, data?, ext?): Promise<string> {
+        let spm = await this.bean(type, ext);
         return await this.insertOne(spm);
     }
 }
