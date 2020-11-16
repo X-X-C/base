@@ -29,15 +29,15 @@ export default class SpmService extends BaseService<SpmDao<Spm>, Spm> {
         spm.timestamp = this.time().common.x;
         //天index
         spm.dayIndex = (await this.count({
-            type,
             openId: spm.openId,
+            type,
             activityId: this.activityId,
             date: spm.date,
         })) + 1;
         //总index
         spm.totalIndex = (await this.count({
-            type,
             openId: spm.openId,
+            type,
             activityId: this.activityId
         })) + 1;
         Object.assign(spm, ext);
