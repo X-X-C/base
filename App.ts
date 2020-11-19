@@ -80,6 +80,12 @@ export default class App {
         );
     }
 
+    async addSimpleSpm(type, data?, ext?) {
+        this.spmBeans.push(
+            await this.spmService.simpleBean(type, data, ext)
+        );
+    }
+
     /**
      * 清空指定的表
      * @param tbs
