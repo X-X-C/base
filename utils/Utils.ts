@@ -32,7 +32,7 @@ export default class Utils {
      * @param any
      */
     static isBlank(any: any): boolean {
-        return any === null || any === undefined || any === "" || JSON.stringify(any) === "[]" || JSON.stringify(any) === "{}";
+        return any === null || any === undefined || any === "" || JSON.stringify(any) === "[]" || JSON.stringify(any) === "{}" || isNaN(any);
     }
 
 
