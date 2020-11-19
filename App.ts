@@ -80,9 +80,9 @@ export default class App {
         );
     }
 
-    async addSimpleSpm(type, data?, ext?) {
+    addSimpleSpm(type, data?, ext?) {
         this.spmBeans.push(
-            await this.spmService.simpleBean(type, data, ext)
+            this.spmService.simpleBean(type, data, ext)
         );
     }
 

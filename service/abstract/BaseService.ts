@@ -268,7 +268,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         await this.app.addSpm(type, data, ext);
     }
 
-    async simpleSpm(type, data?, ext?) {
-        await this.app.addSimpleSpm(type, data, ext);
+    simpleSpm(type, data?, ext?) {
+        this.app.addSimpleSpm(type, data, ext);
     }
 }

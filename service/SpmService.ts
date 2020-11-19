@@ -16,8 +16,8 @@ export default class SpmService extends BaseService<SpmDao<Spm>, Spm> {
      * @param data
      * @param ext 新增或修改源spm数据
      */
-    async simpleBean(type: string, data?, ext?): Promise<Spm> {
-        return await this.bean(type, data, ext, true);
+    simpleBean(type: string, data?, ext?): Promise<Spm> {
+        return this.bean(type, data, ext, true);
     }
 
     /**
