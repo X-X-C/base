@@ -4,7 +4,7 @@ export default class Spm {
     //统计类型
     type: string;
     //时间戳
-    timestamp: string;
+    timestamp: number;
     //时间字符串
     time: string;
     //日期字符串

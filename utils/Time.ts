@@ -8,7 +8,7 @@ export default class Time {
         this.common = {
             base: this.bean.format("YYYY-MM-DD HH:mm:ss"),
             YYYYMMDD: this.bean.format("YYYYMMDD"),
-            x: this.bean.format("x")
+            x: Number(this.bean.format("x"))
         }
         this.to = (number = 0, string = "d"): Time => {
             // @ts-ignore
@@ -21,7 +21,7 @@ export default class Time {
     common: {
         base: string,
         YYYYMMDD: string,
-        x: string
+        x: number
     };
     to: Function;
     format: Function;
