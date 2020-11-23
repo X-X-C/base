@@ -5,9 +5,9 @@ export default class BaseResult {
      * @param message 信息
      * @param data  数据
      * @param success  是否成功
-     * @param error 失败
+     * @param code  状态码
      */
-    constructor(public message: string, public data: any, public success: boolean, public error: number) {
+    constructor(public message: string, public data: any, public success: boolean, public code: number) {
     }
 
     //请求参数
@@ -16,8 +16,8 @@ export default class BaseResult {
     api;
 
     //成功码
-    public static readonly STATUS_SUCCESS = 0; //成功码
-    public static readonly STATUS_FAIL = 1; //服务器错误码
+    public static readonly STATUS_SUCCESS = 200; //成功码
+    public static readonly STATUS_FAIL = 500; //服务器错误码
 
 
     //基础成功返回对象

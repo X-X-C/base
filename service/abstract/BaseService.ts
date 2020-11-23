@@ -4,6 +4,7 @@ import Utils from "../../utils/Utils";
 import {result} from "../../utils/Type";
 import ServiceManager from "./ServiceManager";
 import App from "../../App";
+import BaseResult from "../../dto/BaseResult";
 
 type listResult<T> = {
     data: T[];
@@ -47,11 +48,12 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         }
     }
 
+    get result(): BaseResult {
+        return this.getResult();
+    }
 
-    get result(): result | any {
-        return {
-            code: 0
-        }
+    getResult(data = {}, success = true, message = "成功", code = BaseResult.STATUS_SUCCESS): BaseResult {
+        return new BaseResult(message, data, success, code);
     }
 
     get options() {

@@ -53,8 +53,8 @@ export default class App {
             if (result.success === false) return result;
             //符合条件进行下一步
             result = await doSomething.call(this.context.data);
-            //如果用户操作过后没有返回值就默认返回成功
-            !Utils.isBlank(result) ? response.data = result : false;
+            //合并参数
+            Object.assign(response, result);
         } catch (e) {
             //发现异常 初始化返回参数
             response = BaseResult.fail(e.message, e);
@@ -90,11 +90,11 @@ export default class App {
      * 清空指定的表
      * @param tbs
      */
-    async cleanTable(tbs): Promise<Array<string>> {
-        let result = null, data = [];
-        for (let k in tbs) {
-            result = await this.db(tbs[k]).deleteMany({_id: {$ne: 0}});
-            data.push(`成功删除${tbs[k]}下的${result}条数据`);
+    async cleanTables(tbs: any[] = []): Promise<string> {
+        let result = null, data = "";
+        for (const tb of tbs) {
+            result = await this.db(tb).deleteMany({_id: {$ne: 0}});
+            data += `成功删除${tb}下的${result}条数据`;
             result = null;
         }
         return data;
