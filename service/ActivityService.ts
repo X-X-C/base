@@ -22,6 +22,14 @@ export default class ActivityService extends BaseService<ActivityDao<any>, any> 
 
     activity: any;
 
+    pureFiled = {
+        startTime: 1,
+        endTime: 1,
+        config: 1,
+        data: 1,
+        isDel: 1
+    }
+
     /**
      * 获取活动状态
      */
@@ -79,7 +87,7 @@ export default class ActivityService extends BaseService<ActivityDao<any>, any> 
 
     protected status(activity: any): number {
         //没有活动
-        if (!activity) {
+        if (!activity || activity.isDel == 1) {
             return -1;
         }
         //活动未开始
