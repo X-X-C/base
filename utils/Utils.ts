@@ -67,19 +67,25 @@ export default class Utils {
      * @param buffer
      * @param defineHeader
      * @param who  读取第几张表
+     * @param ext
      */
-    static parseExcel(buffer, defineHeader: any = {}, who: number = 0): Array<any> | false {
-        let data, workbook;
+    static parseExcel(buffer, defineHeader: any = {}, who: number = 0, ext: any = {}): any {
+        let rs = {
+            success: false,
+            message: "失败",
+            data: []
+        }
+        let workbook;
         workbook = xlsx.read(buffer, {
             type: "buffer"
         });
         //读取表的数据
-        data = workbook.Sheets[workbook.SheetNames[who]];
-        data = xlsx.utils.sheet_to_json(data);
+        rs.data = workbook.Sheets[workbook.SheetNames[who]];
+        rs.data = xlsx.utils.sheet_to_json(rs.data, ext);
+        let header = true;
         try {
-            let header = true;
             //映射对应的键
-            data = data.map(v => {
+            rs.data = rs.data.map(v => {
                 let o = {};
                 for (let key in defineHeader) {
                     let targetKey = defineHeader[key];
@@ -98,10 +104,12 @@ export default class Utils {
                 header = false;
                 return o;
             });
+            rs.success = true;
+            rs.message = "成功"
         } catch (e) {
-            return false;
+            rs.message = JSON.stringify(e);
         }
-        return data;
+        return rs;
     }
 
     /**
