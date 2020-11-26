@@ -26,8 +26,7 @@ export default class ActivityService extends BaseService<ActivityDao<any>, any> 
         startTime: 1,
         endTime: 1,
         config: 1,
-        data: 1,
-        isDel: 1
+        data: 1
     }
 
     /**
@@ -71,7 +70,9 @@ export default class ActivityService extends BaseService<ActivityDao<any>, any> 
             //返回值
             let result: any = {};
             //过滤参数
-            let filter: any = {};
+            let filter: any = {
+                isDel: 0
+            };
             !this.activityId || (filter._id = this.activityId)
             let options: any = {};
             !projection || (options.projection = projection)
@@ -87,7 +88,7 @@ export default class ActivityService extends BaseService<ActivityDao<any>, any> 
 
     protected status(activity: any): number {
         //没有活动
-        if (!activity || activity.isDel == 1) {
+        if (!activity) {
             return -1;
         }
         //活动未开始

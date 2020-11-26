@@ -71,8 +71,8 @@ export default class Utils {
      */
     static parseExcel(buffer, defineHeader: any = {}, who: number = 0, ext: any = {}): any {
         let rs = {
-            success: false,
-            message: "失败",
+            success: true,
+            message: "成功",
             data: []
         }
         let workbook;
@@ -82,32 +82,33 @@ export default class Utils {
         //读取表的数据
         rs.data = workbook.Sheets[workbook.SheetNames[who]];
         rs.data = xlsx.utils.sheet_to_json(rs.data, ext);
-        let header = true;
-        try {
-            //映射对应的键
-            rs.data = rs.data.map(v => {
-                let o = {};
-                for (let key in defineHeader) {
-                    let targetKey = defineHeader[key];
-                    //如果是表头
-                    if (header === true) {
-                        //如果表头中没有对应的键
-                        if (typeof v[targetKey] === "undefined") {
-                            throw "缺少字段" + targetKey
+        if (!Utils.isBlank(defineHeader)) {
+            let header = true;
+            try {
+                //映射对应的键
+                rs.data = rs.data.map(v => {
+                    let o = {};
+                    for (let key in defineHeader) {
+                        let targetKey = defineHeader[key];
+                        //如果是表头
+                        if (header === true) {
+                            //如果表头中没有对应的键
+                            if (typeof v[targetKey] === "undefined") {
+                                throw "缺少字段" + targetKey
+                            }
                         }
+                        if (typeof v[targetKey] === "number") {
+                            v[targetKey] = String(v[targetKey]);
+                        }
+                        o[key] = v[targetKey];
                     }
-                    if (typeof v[targetKey] === "number") {
-                        v[targetKey] = String(v[targetKey]);
-                    }
-                    o[key] = v[targetKey];
-                }
-                header = false;
-                return o;
-            });
-            rs.success = true;
-            rs.message = "成功"
-        } catch (e) {
-            rs.message = JSON.stringify(e);
+                    header = false;
+                    return o;
+                });
+            } catch (e) {
+                rs.success = false;
+                rs.message = JSON.stringify(e);
+            }
         }
         return rs;
     }
