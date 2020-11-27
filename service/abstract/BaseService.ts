@@ -204,7 +204,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         $push: {},
         $set: {}
     }) {
-        let type = Utils.type;
+        let {type, getType} = Utils;
         for (let targetKey in target) {
             let targetV = target[targetKey];
             let originV = origin[targetKey];
@@ -214,8 +214,8 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
             }
             //如果两个对象不相同
             if (JSON.stringify(targetV) !== JSON.stringify(originV)) {
-                let originType = Utils.getType(originV);
-                let targetType = Utils.getType(targetV);
+                let originType = getType(originV);
+                let targetType = getType(targetV);
                 //如果目标的对象类型相同
                 if (originType === targetType && [type.object, type.number, type.array].indexOf(originType) !== -1) {
                     //如果是对象
@@ -235,10 +235,10 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
                             let originArrayV = originV[index];
                             //如果两个值是不相等的
                             if (JSON.stringify(originArrayV) !== JSON.stringify(targetVElement)) {
-                                let targetVElementType = Utils.getType(targetVElement);
-                                let originArrayVType = Utils.getType(originArrayV);
+                                let targetVElementType = getType(targetVElement);
+                                let originArrayVType = getType(originArrayV);
                                 //如果目标不存在
-                                if (originArrayVType === Utils.getType(undefined)) {
+                                if (originArrayVType === getType(undefined)) {
                                     compareRs.$push[key].$each.push(targetVElement);
                                 }
                                 //如果类型为对象
