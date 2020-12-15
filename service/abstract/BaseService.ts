@@ -48,6 +48,10 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         }
     }
 
+    get globalActivity() {
+        return this.app.globalActivity;
+    }
+
     get result(): BaseResult {
         return this.getResult();
     }
