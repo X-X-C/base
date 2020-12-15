@@ -10,7 +10,7 @@ import BaseService from "./abstract/BaseService";
 import ActivityDao from "../dao/ActivityDao";
 import App from "../App";
 
-type activityData = {
+export type activityData = {
     code: number,
     data: any
 }

@@ -3,7 +3,7 @@ import BaseResult from "./dto/BaseResult";
 import ErrorLogService from "./service/ErrorLogService";
 import ServiceManager from "./service/abstract/ServiceManager";
 import SpmService from "./service/SpmService";
-import ActivityService from "./service/ActivityService";
+import ActivityService, {activityData} from "./service/ActivityService";
 
 export default class App {
 
@@ -32,7 +32,7 @@ export default class App {
     //埋点数组
     spmBeans = [];
     //全局活动对象
-    globalActivity: any;
+    globalActivity: activityData;
 
     /**
      * 运行方法 可以捕获异常并处理
