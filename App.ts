@@ -24,7 +24,7 @@ export default class App {
         //全局请求参数
         needParams: [],
         //是否启用全局活动
-        globalActivity: false
+        globalActivity: true
     }
 
     //埋点对象
