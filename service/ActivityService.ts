@@ -40,7 +40,9 @@ export default class ActivityService extends BaseService<ActivityDao<any>, any> 
         }
         //否则查询活动
         else {
-            let filter: any = {};
+            let filter: any = {
+                isDel: 0
+            };
             !this.activityId || (filter._id = this.activityId);
             activity = await super.get(filter, {
                 projection: {
