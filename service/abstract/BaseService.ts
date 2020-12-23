@@ -24,7 +24,8 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         this.openId = this.context.openId;
         this.mixNick = this.context.mixNick
         this.activityId = this.data.activityId;
-        this.response = this.app.response;
+        //如果不是APP的情况初始化一个返回值
+        this.response = this.app.response || BaseResult.success();
     }
 
     protected app: App;
