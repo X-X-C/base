@@ -24,6 +24,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         this.openId = this.context.openId;
         this.mixNick = this.context.mixNick
         this.activityId = this.data.activityId;
+        this.response = this.app.response;
     }
 
     protected app: App;
@@ -35,6 +36,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
     protected openId: string;
     protected mixNick: string;
     protected activityId: string;
+    protected response: BaseResult;
     protected time = (date: any = new Date()): Time => {
         return new Time(date);
     };
@@ -50,14 +52,6 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
 
     get globalActivity() {
         return this.app.globalActivity;
-    }
-
-    get result(): BaseResult {
-        return this.getResult();
-    }
-
-    getResult(data = {}, success = true, message = "成功", code = BaseResult.STATUS_SUCCESS): BaseResult {
-        return new BaseResult(message, data, success, code);
     }
 
     get options() {

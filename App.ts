@@ -16,7 +16,6 @@ export default class App {
 
     //服务管理
     services: ServiceManager;
-
     //APP配置
     config = {
         //是否在请求结束后返回本次请求参数
@@ -26,7 +25,8 @@ export default class App {
         //是否启用全局活动
         globalActivity: false
     }
-
+    //返回值对象
+    response: BaseResult;
     //埋点对象
     spmService: SpmService;
     //埋点数组
@@ -41,12 +41,12 @@ export default class App {
      */
     async run(doSomething: Function, needParams: string[] = []): Promise<BaseResult> {
         //初始化返回对象
-        let response = BaseResult.success();
+        this.response = BaseResult.success();
         //保存原始请求参数
         let params = Utils.deepClone(this.context.data);
         //是否返回请求参数
         if (this.config.returnParams === true) {
-            response.params = params;
+            this.response.params = params;
         }
         //记录值
         let result = null;
@@ -65,17 +65,17 @@ export default class App {
                 }
             }
             //符合条件进行下一步
-            result = await doSomething.call(this.context.data);
-            //合并参数
-            Object.assign(response, result);
+            await doSomething.call(this.context.data);
+            //合并参数?
+            // Object.assign(this.response, result);
         } catch (e) {
             //发现异常 初始化返回参数
-            response = BaseResult.fail(e.message, e);
-            response.api = this.apiName;
-            response.params = params;
+            this.response = BaseResult.fail(e.message, e);
+            this.response.api = this.apiName;
+            this.response.params = params;
             try {
                 let errorLogService = this.services.getService(ErrorLogService)
-                await errorLogService.add(response);
+                await errorLogService.add(this.response);
             } catch (e) {
                 //...
             }
@@ -84,7 +84,7 @@ export default class App {
         await this.spmService.insertMany(this.spmBeans);
         //清空埋点
         this.spmBeans = [];
-        return response;
+        return this.response;
     }
 
     async addSpm(type, data?, ext?) {
