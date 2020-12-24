@@ -14,10 +14,12 @@ export default class BaseResult {
     params;
     //所属api
     api;
-
+    //错误码
+    public static readonly STATUS_FAIL = 500; //服务器错误码
+    public static readonly NOT_AS_EXPECT = 501; //不符合预期
     //成功码
     public static readonly STATUS_SUCCESS = 200; //成功码
-    public static readonly STATUS_FAIL = 500; //服务器错误码
+    public static readonly NOT_IN_ACTIVE_TIME = 201; //不在活动时间内
 
 
     //基础成功返回对象
@@ -28,5 +30,15 @@ export default class BaseResult {
     //基础失败返回对象
     public static fail(message: string = "错误", data: any = {}, code: number = this.STATUS_FAIL): BaseResult {
         return new BaseResult(message, data, false, code);
+    }
+
+    public set201() {
+        this.message = '不在活动时间内';
+        this.code = BaseResult.NOT_IN_ACTIVE_TIME;
+    }
+
+    public set501() {
+        this.message = '意外错误';
+        this.code = BaseResult.NOT_AS_EXPECT;
     }
 }
