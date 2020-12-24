@@ -19,8 +19,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         this.cloud = this.context.cloud;
         this.data = this.context.data;
         //处理未授权的用户名称
-        this.context.userNick = this.context.userNick || this.context.mixNick.substr(0, 1) + "**";
-        this.nick = this.context.userNick;
+        this.nick = this.context.userNick || this.context.mixNick.substr(0, 1) + "**";
         this.openId = this.context.openId;
         this.mixNick = this.context.mixNick
         this.activityId = this.data.activityId;

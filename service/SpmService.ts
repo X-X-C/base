@@ -31,7 +31,7 @@ export default class SpmService extends BaseService<SpmDao<Spm>, Spm> {
         let spm = new Spm();
         spm.activityId = this.activityId;
         spm.date = this.time().format("YYYY-MM-DD");
-        spm.nick = this.nick;
+        spm.nick = this.context.userNick;
         spm.type = type;
         spm.data = {
             ...this.data,
