@@ -70,45 +70,51 @@ export default class Utils {
      * @param ext
      */
     static parseExcel(buffer, defineHeader: any = {}, who: number = 0, ext: any = {}): any {
-        let rs = {
-            success: true,
-            message: "成功",
-            data: []
-        }
         let workbook;
+        //定义了header,检查header
+        if (!Utils.isBlank(defineHeader)) {
+            //获取表头
+            workbook = xlsx.read(buffer, {
+                type: "buffer",
+                sheetRows: 1
+            });
+            //检查表头是否包含所需字段
+            let header = workbook.Sheets[workbook.SheetNames[who]];
+            //表头数组
+            header = xlsx.utils.sheet_to_json(header, {
+                header: 1
+            });
+            //是否缺少字段
+            Object.values(defineHeader).every(v => {
+                if (header.indexOf(v) !== -1) {
+                    return true;
+                }
+                throw Error(`缺少字段[${v}]`);
+            });
+        }
+        //开始正式操作
         workbook = xlsx.read(buffer, {
             type: "buffer"
         });
         //读取表的数据
-        rs.data = workbook.Sheets[workbook.SheetNames[who]];
-        rs.data = xlsx.utils.sheet_to_json(rs.data, ext);
+        let rs = workbook.Sheets[workbook.SheetNames[who]];
+        rs = xlsx.utils.sheet_to_json(rs, ext);
         if (!Utils.isBlank(defineHeader)) {
-            let header = true;
-            try {
-                //映射对应的键
-                rs.data = rs.data.map(v => {
-                    let o = {};
-                    for (let key in defineHeader) {
-                        let targetKey = defineHeader[key];
-                        //如果是表头
-                        if (header === true) {
-                            //如果表头中没有对应的键
-                            if (typeof v[targetKey] === "undefined") {
-                                throw "缺少字段" + targetKey
-                            }
-                        }
+            //映射对应的键
+            rs = rs.map(v => {
+                let o = {};
+                for (let key in defineHeader) {
+                    let targetKey = defineHeader[key];
+                    //如果对应字段存在
+                    if (v[targetKey] !== undefined) {
                         if (typeof v[targetKey] === "number") {
                             v[targetKey] = String(v[targetKey]);
                         }
                         o[key] = v[targetKey];
                     }
-                    header = false;
-                    return o;
-                });
-            } catch (e) {
-                rs.success = false;
-                rs.message = JSON.stringify(e);
-            }
+                }
+                return o;
+            });
         }
         return rs;
     }
