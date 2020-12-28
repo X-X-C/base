@@ -3,7 +3,6 @@ import BaseResult from "./dto/BaseResult";
 import ErrorLogService from "./service/ErrorLogService";
 import ServiceManager from "./service/abstract/ServiceManager";
 import SpmService from "./service/SpmService";
-import ActivityService, {activityData} from "./service/ActivityService";
 
 export default class App {
 
@@ -21,9 +20,7 @@ export default class App {
         //是否在请求结束后返回本次请求参数
         returnParams: true,
         //全局请求参数
-        needParams: [],
-        //是否启用全局活动
-        globalActivity: false
+        needParams: []
     }
     //返回值对象
     response: BaseResult;
@@ -31,8 +28,6 @@ export default class App {
     spmService: SpmService;
     //埋点数组
     spmBeans = [];
-    //全局活动对象
-    globalActivity: activityData;
 
     /**
      * 运行方法 可以捕获异常并处理
@@ -56,18 +51,10 @@ export default class App {
             result = Utils.checkParams(needParams, params);
             //如果不符合条件直接返回
             if (result.success === false) return result;
-            //是否启用全局活动
-            if (this.config.globalActivity === true) {
-                //且全局活动没有设置值
-                if (!this.globalActivity) {
-                    let activityService = this.getService(ActivityService);
-                    this.globalActivity = await activityService.getActivity(activityService.pureFiled);
-                }
-            }
+            //运行前
+            await this.before.call(this);
             //符合条件进行下一步
             await doSomething.call(this.context.data);
-            //合并参数?
-            // Object.assign(this.response, result);
         } catch (e) {
             //发现异常 初始化返回参数
             this.response = BaseResult.fail(e.message, e);
@@ -85,6 +72,10 @@ export default class App {
         //清空埋点
         this.spmBeans = [];
         return this.response;
+    }
+
+    async before() {
+        //重写方法
     }
 
     async addSpm(type, data?, ext?) {
