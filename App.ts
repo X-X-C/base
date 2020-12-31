@@ -3,6 +3,7 @@ import BaseResult from "./dto/BaseResult";
 import ErrorLogService from "./service/ErrorLogService";
 import ServiceManager from "./service/abstract/ServiceManager";
 import SpmService from "./service/SpmService";
+import {activityData} from "./service/ActivityService";
 
 export default class App {
 
@@ -28,6 +29,8 @@ export default class App {
     spmService: SpmService;
     //埋点数组
     spmBeans = [];
+    //全局活动
+    globalActivity: activityData;
 
     /**
      * 运行方法 可以捕获异常并处理
@@ -115,4 +118,8 @@ export default class App {
     getService<T>(clazz: new(...args: any) => T): T {
         return this.services.getService(clazz);
     }
+}
+
+export interface OverwriteApp {
+    before();
 }

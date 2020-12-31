@@ -1,7 +1,6 @@
 import BaseDao from "../../dao/abstract/BaseDao";
 import Time from "../../utils/Time";
 import Utils from "../../utils/Utils";
-import {result} from "../../utils/Type";
 import ServiceManager from "./ServiceManager";
 import App from "../../App";
 import BaseResult from "../../dto/BaseResult";
