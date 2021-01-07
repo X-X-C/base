@@ -12,7 +12,43 @@ import App from "../App";
 
 export type activityData = {
     code: number,
-    data: any
+    data: activity
+}
+
+type activity = {
+    _id: string,
+    title: string,
+    data: {
+        grantTotal: any,
+        //开奖状态
+        award: boolean,
+    },
+    startTime: string,
+    endTime: string,
+    //0--未删除，1--已删除
+    isDel: 0 | 1,
+    config: {
+        lotteryPrize: {
+            condition: {
+                num: number,
+                type: string
+            },
+            prizeList: any[]
+        },
+        fixedPrizeList: configPrize[],
+        assistance: configPrize,
+        rankPrizeList: configPrize[],
+    }
+    [key: string]: any
+}
+
+
+type configPrize = {
+    id: string,
+    type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point'
+    stock: number
+    condition: any
+    [key: string]: any
 }
 
 export default class ActivityService extends BaseService<ActivityDao<any>, any> {
