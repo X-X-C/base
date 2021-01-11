@@ -18,7 +18,7 @@ export default class TopService {
 
     context;
     //TOP接口工具
-    top;
+    top: Top;
 
     getResult(): result {
         return {
@@ -160,6 +160,13 @@ export default class TopService {
             quantity: num,
             open_id: openId
         }, ext);
+        r.code = Number(!!r.data.result);
+        return r;
+    }
+
+    async taobaoCrmPointAvailableGet(mix_nick = this.context.mixNick, ext: any = {}): Promise<result> {
+        let r = this.getResult();
+        r.data = await this.top.taobaoCrmPointAvailableGet(mix_nick, ext);
         r.code = Number(!!r.data.result);
         return r;
     }

@@ -162,4 +162,20 @@ export default class Top {
             ext
         );
     }
+
+    /**
+     * 会员积分查询
+     * @param mix_nick
+     * @param ext
+     * @return 参考：https://open.taobao.com/api.htm?docId=42617&docType=2&scopeId=15929
+     */
+    async taobaoCrmPointAvailableGet(mix_nick, ext?) {
+        return await this.invoke(
+            "taobao.crm.point.available.get",
+            {
+                mix_nick: mix_nick,
+            },
+            ext
+        );
+    }
 }
