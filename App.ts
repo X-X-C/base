@@ -3,7 +3,7 @@ import BaseResult from "./dto/BaseResult";
 import ErrorLogService from "./service/ErrorLogService";
 import ServiceManager from "./service/abstract/ServiceManager";
 import SpmService from "./service/SpmService";
-import {activityData} from "./service/ActivityService";
+import BaseActivityService, {activityData} from "./service/BaseActivityService";
 
 export default class App {
 
@@ -21,7 +21,9 @@ export default class App {
         //是否在请求结束后返回本次请求参数
         returnParams: true,
         //全局请求参数
-        needParams: []
+        needParams: [],
+        //是否开启全局活动
+        globalActivity: false
     }
     //返回值对象
     response: BaseResult;
@@ -78,7 +80,12 @@ export default class App {
     }
 
     async before() {
-        //重写方法
+        //如果配置了全局活动，且没有获取过
+        if (this.config.globalActivity === true && !this.globalActivity) {
+            let activityService = this.getService(BaseActivityService);
+            //设置全局活动
+            this.globalActivity = await activityService.getActivity(activityService.pureFiled);
+        }
     }
 
     async addSpm(type, data?, ext?) {
@@ -118,8 +125,4 @@ export default class App {
     getService<T>(clazz: new(...args: any) => T): T {
         return this.services.getService(clazz);
     }
-}
-
-export interface OverwriteApp {
-    before();
 }

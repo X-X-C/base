@@ -42,7 +42,6 @@ type activity = {
     [key: string]: any
 }
 
-
 type configPrize = {
     id: string,
     type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point'
@@ -51,7 +50,7 @@ type configPrize = {
     [key: string]: any
 }
 
-export default class ActivityService extends BaseService<ActivityDao<any>, any> {
+export default class BaseActivityService extends BaseService<ActivityDao<any>, any> {
     constructor(app: App) {
         super(ActivityDao, app);
     }
