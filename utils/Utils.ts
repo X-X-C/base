@@ -36,8 +36,7 @@ export default class Utils {
             any === undefined ||
             any === "" ||
             JSON.stringify(any) === "[]" ||
-            JSON.stringify(any) === "{}" ||
-            (isNaN(any) && typeof any !== "object");
+            JSON.stringify(any) === "{}"
     }
 
 
