@@ -20,6 +20,7 @@ export default class BaseResult {
     //成功码
     public static readonly STATUS_SUCCESS = 200; //成功码
     public static readonly NOT_IN_ACTIVE_TIME = 201; //不在活动时间内
+    public static readonly LOGIC_FAIL = 222; //逻辑失败
 
 
     //基础成功返回对象
@@ -40,5 +41,10 @@ export default class BaseResult {
     public set501() {
         this.message = '意外错误';
         this.code = BaseResult.NOT_AS_EXPECT;
+    }
+
+    public set222(message?: string) {
+        this.message = message || "操作失败";
+        this.code = BaseResult.LOGIC_FAIL;
     }
 }
