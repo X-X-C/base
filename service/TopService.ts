@@ -149,6 +149,18 @@ export default class TopService {
     }
 
     /**
+     * 获取多个商品信息
+     * @param num_iid
+     * @param ext
+     */
+    async taobaoItemsSellerListGet(num_iids: any[], ext: any = {}): Promise<result> {
+        let r = this.getResult();
+        r.data = await this.top.taobaoItemsSellerListGet(num_iids, ext);
+        r.code = Number(!!r.data.items.item);
+        return r;
+    }
+
+    /**
      * 获取商品信息
      * @param num   增加数量
      * @param openId    默认为当前用户增加

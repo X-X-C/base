@@ -144,6 +144,23 @@ export default class Top {
     }
 
     /**
+     * 获取多个商品信息
+     * @param num_iids  商品IDs
+     * @param ext
+     * @return 参考：https://open.taobao.com/api.htm?docId=24626&docType=2&source=search
+     */
+    async taobaoItemsSellerListGet(num_iids, ext?) {
+        return await this.invoke(
+            "taobao.items.seller.list.get",
+            {
+                fields: "num_iid,title,nick,price,approve_status,sku",
+                num_iids
+            },
+            ext
+        );
+    }
+
+    /**
      * 会员积分变更
      * @param data 参数
      * @param ext
