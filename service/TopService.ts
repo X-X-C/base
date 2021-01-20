@@ -153,7 +153,7 @@ export default class TopService {
      * @param num_iid
      * @param ext
      */
-    async taobaoItemsSellerListGet(num_iids: any[], ext: any = {}): Promise<result> {
+    async taobaoItemsSellerListGet(num_iids, ext: any = {}): Promise<result> {
         let r = this.getResult();
         r.data = await this.top.taobaoItemsSellerListGet(num_iids, ext);
         r.code = Number(!!r.data.items.item);
