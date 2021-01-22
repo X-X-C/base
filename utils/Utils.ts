@@ -4,6 +4,7 @@ import * as xlsx from "xlsx";
 import * as randombyweights from "randombyweights";
 // @ts-ignore
 import * as qr from "qr-image";
+import {mongodbOptions} from "./Type";
 
 export default class Utils {
     /**
@@ -255,7 +256,7 @@ export default class Utils {
         return JSON.parse(JSON.stringify(obj));
     }
 
-    static toJson(any) {
+    static toJson(any): string {
         let r: string = JSON.stringify(any);
         if (typeof any === "string") {
             r = r.substring(1, r.length - 1);
@@ -271,7 +272,7 @@ export default class Utils {
      * @param extKey
      * @param compareRs
      */
-    static compareObj(origin, target, extKey = "", compareRs: any = {
+    static compareObj(origin, target, extKey: string = "", compareRs: mongodbOptions = {
         $inc: {},
         $push: {},
         $set: {}

@@ -7,8 +7,12 @@ export default class BaseEntity {
 
     _: this;
 
-    _init() {
-        this._ = Utils.deepClone(this);
+    get _init() {
+        //保证只被初始化一次
+        if (this._ === undefined) {
+            this._ = Utils.deepClone(this);
+        }
+        return;
     }
 
     get _options() {

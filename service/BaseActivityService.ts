@@ -38,6 +38,7 @@ type activity = {
         fixedPrizeList: configPrize[],
         assistance: configPrize,
         rankPrizeList: configPrize[],
+        [key: string]: any
     }
     [key: string]: any
 }

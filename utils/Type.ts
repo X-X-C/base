@@ -7,3 +7,9 @@ export type result = {
     data?: any,
     [props: string]: any
 }
+
+export type mongodbOptions = {
+    $set?: any
+    $push?: any,
+    $inc?: any
+}
