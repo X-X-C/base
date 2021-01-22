@@ -15,7 +15,7 @@ export type activityData = {
     data: activity
 }
 
-type activity = {
+export interface activity {
     _id: string,
     title: string,
     data: {
@@ -27,27 +27,36 @@ type activity = {
     endTime: string,
     //0--未删除，1--已删除
     isDel: 0 | 1,
-    config: {
-        lotteryPrize: {
-            condition: {
-                num: number,
-                type: string
-            },
-            prizeList: any[]
-        },
-        fixedPrizeList: configPrize[],
-        assistance: configPrize,
-        rankPrizeList: configPrize[],
-        [key: string]: any
-    }
+    config: activityConfig
+
     [key: string]: any
 }
 
-type configPrize = {
+export interface activityConfig {
+    lotteryPrize: {
+        condition: {
+            num: number,
+            type: string
+        },
+        prizeList: any[]
+    },
+    fixedPrizeList: configPrize[],
+    assistance: configPrize,
+    rankPrizeList: configPrize[],
+
+    [key: string]: any
+}
+
+
+export interface configPrize {
     id: string,
     type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point'
     stock: number
-    condition: any
+    condition: {
+        num: number,
+        type: string
+    }
+
     [key: string]: any
 }
 
