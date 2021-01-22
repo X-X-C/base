@@ -272,68 +272,84 @@ export default class Utils {
      * @param extKey
      * @param compareRs
      */
-    static compareObj(origin, target, extKey: string = "", compareRs: mongodbOptions = {
-        $inc: {},
-        $push: {},
-        $set: {}
-    }) {
-        let {type, getType} = Utils;
+    static compareObj(
+        origin,
+        target,
+        extKey: string = "",
+        compareRs: mongodbOptions = {
+            $inc: {},
+            $push: {},
+            $set: {}
+        }
+    ) {
+        let {type, getType, compareObj} = Utils;
         for (let targetKey in target) {
             let targetV = target[targetKey];
             let originV = origin[targetKey];
+            let originType = getType(originV);
+            let targetType = getType(targetV);
             let key = targetKey;
             if (extKey !== "") {
                 key = extKey + "." + key;
             }
             //如果两个对象不相同
-            if (JSON.stringify(targetV) !== JSON.stringify(originV)) {
-                let originType = getType(originV);
-                let targetType = getType(targetV);
-                //如果目标的对象类型相同
-                if (originType === targetType && [type.object, type.number, type.array].indexOf(originType) !== -1) {
-                    //如果是对象
-                    if (originType === type.object) {
-                        //继续往下匹配
-                        this.compareObj(originV, targetV, key, compareRs)
-                    } else if (originType === type.number) {
-                        //数值相加
-                        compareRs.$inc[key] = targetV - originV;
-                    } else if (originType === type.array) {
-                        compareRs.$push[key] = {
-                            $each: []
-                        }
-                        let index = 0;
-                        //如果是数组
-                        for (let targetVElement of targetV) {
-                            let originArrayV = originV[index];
-                            //如果两个值是不相等的
-                            if (JSON.stringify(originArrayV) !== JSON.stringify(targetVElement)) {
-                                let targetVElementType = getType(targetVElement);
-                                let originArrayVType = getType(originArrayV);
-                                //如果目标不存在
-                                if (originArrayVType === getType(undefined)) {
-                                    compareRs.$push[key].$each.push(targetVElement);
-                                }
-                                //如果类型为对象
-                                else if (targetVElementType === originArrayVType && originArrayVType === type.object) {
-                                    //继续往下匹配
-                                    this.compareObj(originArrayV, targetVElement, key + "." + index, compareRs)
-                                }
-                                //如果类型不为对象
-                                else {
-                                    compareRs.$set[key + "." + index] = targetVElementType;
-                                }
-                            }
-                            ++index;
-                        }
-                        if (compareRs.$push[key].$each.length <= 0) {
-                            delete compareRs.$push[key];
-                        }
+            if (
+                JSON.stringify(targetV) !== JSON.stringify(originV) &&
+                originType === targetType &&
+                [type.object, type.number, type.array].indexOf(originType) !== -1
+            ) {
+                //如果是对象
+                if (originType === type.object) {
+                    //继续往下匹配
+                    this.compareObj(
+                        originV,
+                        targetV,
+                        key,
+                        compareRs
+                    )
+                } else if (originType === type.number) {
+                    //数值相加
+                    compareRs.$inc[key] = targetV - originV;
+                } else if (originType === type.array) {
+                    compareRs.$push[key] = {
+                        $each: []
                     }
-                } else {
-                    //如果类型不同直接设置
-                    compareRs.$set[key] = targetV;
+                    targetV.forEach((targetVElement, index) => {
+                        let originArrayV = originV[index];
+                        //如果两个值是不相等的
+                        if (JSON.stringify(originArrayV) !== JSON.stringify(targetVElement)) {
+                            let targetVElementType = getType(targetVElement);
+                            let originArrayVType = getType(originArrayV);
+                            //如果目标不存在
+                            if (originArrayVType === getType(undefined)) {
+                                compareRs.$push[key].$each.push(targetVElement);
+                            }
+                            //如果类型为对象
+                            else if (
+                                targetVElementType === originArrayVType &&
+                                originArrayVType === type.object
+                            ) {
+                                //继续往下匹配
+                                compareObj(
+                                    originArrayV,
+                                    targetVElement,
+                                    key + "." + index,
+                                    compareRs
+                                )
+                            }
+                            //如果类型不为对象
+                            else {
+                                compareRs.$set[key + "." + index] = targetVElementType;
+                            }
+                        }
+                    })
+                    if (compareRs.$push[key].$each.length <= 0) {
+                        delete compareRs.$push[key];
+                    }
                 }
+            } else {
+                //如果类型不同直接设置
+                compareRs.$set[key] = targetV;
             }
         }
         return compareRs;
