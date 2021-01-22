@@ -254,4 +254,87 @@ export default class Utils {
     static deepClone<T>(obj: T): T {
         return JSON.parse(JSON.stringify(obj));
     }
+
+    static toJson(any) {
+        let r: string = JSON.stringify(any);
+        if (typeof any === "string") {
+            r = r.substring(1, r.length - 1);
+        }
+        return r;
+    }
+
+    /**
+     * 比较两个对象，返回两个比较后的直接条件
+     * !!!!!!慎用!!!!!!
+     * @param origin
+     * @param target
+     * @param extKey
+     * @param compareRs
+     */
+    static compareObj(origin, target, extKey = "", compareRs: any = {
+        $inc: {},
+        $push: {},
+        $set: {}
+    }) {
+        let {type, getType} = this;
+        for (let targetKey in target) {
+            let targetV = target[targetKey];
+            let originV = origin[targetKey];
+            let key = targetKey;
+            if (extKey !== "") {
+                key = extKey + "." + key;
+            }
+            //如果两个对象不相同
+            if (JSON.stringify(targetV) !== JSON.stringify(originV)) {
+                let originType = getType(originV);
+                let targetType = getType(targetV);
+                //如果目标的对象类型相同
+                if (originType === targetType && [type.object, type.number, type.array].indexOf(originType) !== -1) {
+                    //如果是对象
+                    if (originType === type.object) {
+                        //继续往下匹配
+                        this.compareObj(originV, targetV, key, compareRs)
+                    } else if (originType === type.number) {
+                        //数值相加
+                        compareRs.$inc[key] = targetV - originV;
+                    } else if (originType === type.array) {
+                        compareRs.$push[key] = {
+                            $each: []
+                        }
+                        let index = 0;
+                        //如果是数组
+                        for (let targetVElement of targetV) {
+                            let originArrayV = originV[index];
+                            //如果两个值是不相等的
+                            if (JSON.stringify(originArrayV) !== JSON.stringify(targetVElement)) {
+                                let targetVElementType = getType(targetVElement);
+                                let originArrayVType = getType(originArrayV);
+                                //如果目标不存在
+                                if (originArrayVType === getType(undefined)) {
+                                    compareRs.$push[key].$each.push(targetVElement);
+                                }
+                                //如果类型为对象
+                                else if (targetVElementType === originArrayVType && originArrayVType === type.object) {
+                                    //继续往下匹配
+                                    this.compareObj(originArrayV, targetVElement, key + "." + index, compareRs)
+                                }
+                                //如果类型不为对象
+                                else {
+                                    compareRs.$set[key + "." + index] = targetVElementType;
+                                }
+                            }
+                            ++index;
+                        }
+                        if (compareRs.$push[key].$each.length <= 0) {
+                            delete compareRs.$push[key];
+                        }
+                    }
+                } else {
+                    //如果类型不同直接设置
+                    compareRs.$set[key] = targetV;
+                }
+            }
+        }
+        return compareRs;
+    }
 }

@@ -14,34 +14,44 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
     protected constructor(Dao: new(...args) => T, app: App) {
         this.dao = new Dao(app.context);
         this.app = app;
-        this.context = this.app.context;
-        this.cloud = this.context.cloud;
-        this.data = this.context.data;
-        //处理未授权的用户名称
-        this.nick = this.context.userNick || this.context.mixNick.substr(0, 1) + "**";
-        this.openId = this.context.openId;
-        this.mixNick = this.context.mixNick
-        this.activityId = this.data.activityId;
-        //如果不是APP的情况初始化一个返回值
-        // this.response = this.app.response || BaseResult.success();
     }
 
     protected app: App;
     protected dao: T;
-    protected cloud: any;
-    protected data: any;
-    protected context: any;
-    protected nick: string;
-    protected openId: string;
-    protected mixNick: string;
-    protected activityId: string;
-    // protected response: BaseResult;
     protected time = (date: any = new Date()): Time => {
         return new Time(date);
     };
 
     get response(): BaseResult {
         return this.app.response || BaseResult.success();
+    }
+
+    get context(): any {
+        return this.app.context;
+    }
+
+    get cloud(): any {
+        return this.context.cloud;
+    }
+
+    get data(): any {
+        return this.context.data;
+    }
+
+    get nick(): string {
+        return this.context.userNick || this.context.mixNick.substr(0, 1) + "**";
+    }
+
+    get openId(): string {
+        return this.context.openId;
+    }
+
+    get mixNick(): string {
+        return this.context.mixNick;
+    }
+
+    get activityId(): string {
+        return this.data.activityId;
     }
 
     getService<C extends { [prop: string]: any }>(target: (new (...args) => C)): C {
@@ -204,66 +214,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         $push: {},
         $set: {}
     }) {
-        let {type, getType} = Utils;
-        for (let targetKey in target) {
-            let targetV = target[targetKey];
-            let originV = origin[targetKey];
-            let key = targetKey;
-            if (extKey !== "") {
-                key = extKey + "." + key;
-            }
-            //如果两个对象不相同
-            if (JSON.stringify(targetV) !== JSON.stringify(originV)) {
-                let originType = getType(originV);
-                let targetType = getType(targetV);
-                //如果目标的对象类型相同
-                if (originType === targetType && [type.object, type.number, type.array].indexOf(originType) !== -1) {
-                    //如果是对象
-                    if (originType === type.object) {
-                        //继续往下匹配
-                        this.compareObj(originV, targetV, key, compareRs)
-                    } else if (originType === type.number) {
-                        //数值相加
-                        compareRs.$inc[key] = targetV - originV;
-                    } else if (originType === type.array) {
-                        compareRs.$push[key] = {
-                            $each: []
-                        }
-                        let index = 0;
-                        //如果是数组
-                        for (let targetVElement of targetV) {
-                            let originArrayV = originV[index];
-                            //如果两个值是不相等的
-                            if (JSON.stringify(originArrayV) !== JSON.stringify(targetVElement)) {
-                                let targetVElementType = getType(targetVElement);
-                                let originArrayVType = getType(originArrayV);
-                                //如果目标不存在
-                                if (originArrayVType === getType(undefined)) {
-                                    compareRs.$push[key].$each.push(targetVElement);
-                                }
-                                //如果类型为对象
-                                else if (targetVElementType === originArrayVType && originArrayVType === type.object) {
-                                    //继续往下匹配
-                                    this.compareObj(originArrayV, targetVElement, key + "." + index, compareRs)
-                                }
-                                //如果类型不为对象
-                                else {
-                                    compareRs.$set[key + "." + index] = targetVElementType;
-                                }
-                            }
-                            ++index;
-                        }
-                        if (compareRs.$push[key].$each.length <= 0) {
-                            delete compareRs.$push[key];
-                        }
-                    }
-                } else {
-                    //如果类型不同直接设置
-                    compareRs.$set[key] = targetV;
-                }
-            }
-        }
-        return compareRs;
+        return Utils.compareObj(origin, target, extKey, compareRs);
     }
 
     async spm(type, data?, ext?) {
