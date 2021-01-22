@@ -339,7 +339,7 @@ export default class Utils {
                             }
                             //如果类型不为对象
                             else {
-                                compareRs.$set[key + "." + index] = targetVElementType;
+                                compareRs.$set[key + "." + index] = targetVElement;
                             }
                         }
                     })
