@@ -276,7 +276,7 @@ export default class Utils {
         $push: {},
         $set: {}
     }) {
-        let {type, getType} = this;
+        let {type, getType} = Utils;
         for (let targetKey in target) {
             let targetV = target[targetKey];
             let originV = origin[targetKey];

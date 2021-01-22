@@ -200,23 +200,6 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         return await this.dao.uploadFile(buffer, fileName);
     }
 
-
-    /**
-     * 比较两个对象，返回两个比较后的修改option
-     * !!!!!!慎用!!!!!!
-     * @param origin
-     * @param target
-     * @param extKey
-     * @param compareRs
-     */
-    compareObj(origin, target, extKey = "", compareRs: any = {
-        $inc: {},
-        $push: {},
-        $set: {}
-    }) {
-        return Utils.compareObj(origin, target, extKey, compareRs);
-    }
-
     async spm(type, data?, ext?) {
         await this.app.addSpm(type, data, ext);
     }
