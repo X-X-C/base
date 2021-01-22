@@ -23,7 +23,7 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         this.mixNick = this.context.mixNick
         this.activityId = this.data.activityId;
         //如果不是APP的情况初始化一个返回值
-        this.response = this.app.response || BaseResult.success();
+        // this.response = this.app.response || BaseResult.success();
     }
 
     protected app: App;
@@ -35,11 +35,14 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
     protected openId: string;
     protected mixNick: string;
     protected activityId: string;
-    protected response: BaseResult;
+    // protected response: BaseResult;
     protected time = (date: any = new Date()): Time => {
         return new Time(date);
     };
 
+    get response(): BaseResult {
+        return this.app.response || BaseResult.success();
+    }
 
     getService<C extends { [prop: string]: any }>(target: (new (...args) => C)): C {
         if (this.app.services instanceof ServiceManager) {
