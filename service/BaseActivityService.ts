@@ -15,7 +15,7 @@ export type activityData = {
     data: activity
 }
 
-export interface activity {
+export type activity = {
     _id: string,
     title: string,
     data: {
@@ -32,7 +32,7 @@ export interface activity {
     [key: string]: any
 }
 
-export interface activityConfig {
+export type activityConfig = {
     lotteryPrize: {
         condition: {
             num: number,
@@ -48,13 +48,14 @@ export interface activityConfig {
 }
 
 
-export interface configPrize {
+export type configPrize = {
     id: string,
     type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point'
     stock: number
     condition: {
         num: number,
         type: string
+        [key: string]: any
     }
 
     [key: string]: any
