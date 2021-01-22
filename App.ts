@@ -12,6 +12,8 @@ export default class App {
         this.services = new ServiceManager(this);
         //创建埋点对象
         this.spmService = this.services.getService(SpmService);
+        //初始化状态
+        this.status = 1;
     }
 
     //服务管理
@@ -23,7 +25,9 @@ export default class App {
         //全局请求参数
         needParams: [],
         //是否开启全局活动
-        globalActivity: false
+        globalActivity: false,
+        //是否检查活动时间
+        inspectionActivity: false
     }
     //返回值对象
     response: BaseResult;
@@ -33,6 +37,8 @@ export default class App {
     spmBeans = [];
     //全局活动
     globalActivity: activityData;
+    //程序状态 0--中断，1--运行
+    status: 0 | 1;
 
     /**
      * 运行方法 可以捕获异常并处理
@@ -56,10 +62,14 @@ export default class App {
             result = Utils.checkParams(needParams, params);
             //如果不符合条件直接返回
             if (result.success === false) return result;
-            //运行前
-            await this.before.call(this);
-            //符合条件进行下一步
-            await doSomething.call(this.context.data);
+            //运行前系统检查
+            await this.before();
+            //自定义运行
+            await this.customBefore();
+            //系统状态正常
+            if (this.status === 1) {
+                await doSomething.call(this.context.data);
+            }
         } catch (e) {
             //发现异常 初始化返回参数
             this.response = BaseResult.fail(e.message, e);
@@ -85,7 +95,20 @@ export default class App {
             let activityService = this.getService(BaseActivityService);
             //设置全局活动
             this.globalActivity = await activityService.getActivity(activityService.pureFiled);
+            //检查活动状态
+            if (this.config.inspectionActivity === true) {
+                //不在活动范围内
+                if (this.globalActivity.code !== 1) {
+                    this.response.set201();
+                    //中断运行
+                    this.status = 0;
+                }
+            }
         }
+    }
+
+    async customBefore(){
+
     }
 
     async addSpm(type, data?, ext?) {
