@@ -7,7 +7,7 @@ export default class BaseEntity {
 
     _: this;
 
-    get _init() {
+    get optionsStart() {
         //保证只被初始化一次
         if (this._ === undefined) {
             this._ = Utils.deepClone(this);
@@ -15,7 +15,7 @@ export default class BaseEntity {
         return;
     }
 
-    get _options() {
+    get optionsEnd() {
         let {deepClone, compareObj} = Utils;
         let cur = deepClone(this);
         delete cur._;
