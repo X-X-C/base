@@ -20,7 +20,8 @@ export default class BaseEntity {
         let cur = deepClone(this);
         delete cur._;
         let op = compareObj(this._, cur);
-        this._ = cur;
+        //销毁本次备份
+        delete this._;
         return op;
     }
 }
