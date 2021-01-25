@@ -120,7 +120,7 @@ export default class TopService {
     async taobaoOpentradeSpecialItemsBind(miniapp_id, item_ids, ext: any = {}): Promise<result> {
         let r = this.getResult();
         r.data = await this.top.taobaoOpentradeSpecialItemsBind(miniapp_id, item_ids, ext)
-        r.code = Number(r.data.results && (r.data.results.bind_ok === true));
+        r.code = Number(r.data.results);
         return r;
     }
 
