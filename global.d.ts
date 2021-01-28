@@ -77,3 +77,8 @@ type orderExt = {
     page_no?: number,
     [other: string]: any
 }
+
+
+interface other {
+    [key: string]: any
+}
