@@ -3,7 +3,7 @@ import BaseResult from "./dto/BaseResult";
 import ErrorLogService from "./service/ErrorLogService";
 import ServiceManager from "./service/abstract/ServiceManager";
 import SpmService from "./service/SpmService";
-import BaseActivityService, {activityData} from "./service/BaseActivityService";
+import BaseActivityService from "./service/BaseActivityService";
 
 export default class App {
 
@@ -107,7 +107,7 @@ export default class App {
         }
     }
 
-    async customBefore(){
+    async customBefore() {
 
     }
 
