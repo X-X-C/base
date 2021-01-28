@@ -4,7 +4,6 @@ import * as xlsx from "xlsx";
 import * as randombyweights from "randombyweights";
 // @ts-ignore
 import * as qr from "qr-image";
-import {mongodbOptions} from "./Type";
 
 export default class Utils {
     /**

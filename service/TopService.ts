@@ -1,14 +1,6 @@
 import Top from "../utils/Top";
 import Utils from "../utils/Utils";
-import {result} from "../utils/Type";
 import App from "../App";
-
-type orderExt = {
-    use_has_next?: boolean,
-    buyer_open_id?: string,
-    page_no?: number,
-    [other: string]: any
-}
 
 export default class TopService {
     constructor(app: App) {

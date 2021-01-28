@@ -5,11 +5,6 @@ import ServiceManager from "./ServiceManager";
 import App from "../../App";
 import BaseResult from "../../dto/BaseResult";
 
-type listResult<T> = {
-    data: T[];
-    [other: string]: any;
-}
-
 export default abstract class BaseService<T extends BaseDao<E>, E extends object> {
     protected constructor(Dao: new(...args) => T, app: App) {
         this.dao = new Dao(app.context);

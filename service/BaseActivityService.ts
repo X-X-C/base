@@ -10,63 +10,12 @@ import BaseService from "./abstract/BaseService";
 import ActivityDao from "../dao/ActivityDao";
 import App from "../App";
 
-export type activityData = {
-    code: number,
-    data: activity
-}
-
-export type activity = {
-    _id: string,
-    title: string,
-    data: {
-        grantTotal: any,
-        //开奖状态
-        award: boolean,
-    },
-    startTime: string,
-    endTime: string,
-    //0--未删除，1--已删除
-    isDel: 0 | 1,
-    config: activityConfig
-
-    [key: string]: any
-}
-
-export type activityConfig = {
-    lotteryPrize: {
-        condition: {
-            num: number,
-            type: string
-        },
-        prizeList: any[]
-    },
-    fixedPrizeList: configPrize[],
-    assistance: configPrize,
-    rankPrizeList: configPrize[],
-
-    [key: string]: any
-}
-
-
-export type configPrize = {
-    id: string,
-    type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point'
-    stock: number
-    condition: {
-        num: number,
-        type: string
-        [key: string]: any
-    }
-
-    [key: string]: any
-}
-
 export default class BaseActivityService extends BaseService<ActivityDao<any>, any> {
     constructor(app: App) {
         super(ActivityDao, app);
     }
 
-    activity: any;
+    activity: activityData;
 
     pureFiled = {
         startTime: 1,
