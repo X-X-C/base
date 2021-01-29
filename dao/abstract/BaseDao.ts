@@ -1,9 +1,6 @@
-import Dao from "./Dao";
-
-export default class BaseDao<T extends object> extends Dao {
+export default class BaseDao<T> {
 
     constructor(public context: any, public table: string) {
-        super(context, table);
         try {
             this.db = context.cloud.db.collection(table);
         } catch (e) {
