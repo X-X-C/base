@@ -64,8 +64,6 @@ export default class App {
             if (result.success === false) return result;
             //运行前系统检查
             await this.before();
-            //自定义运行
-            await this.customBefore();
             //系统状态正常
             if (this.status === 1) {
                 await doSomething.call(this.context.data);
@@ -100,15 +98,11 @@ export default class App {
                 //不在活动范围内
                 if (this.globalActivity.code !== 1) {
                     this.response.set201();
-                    //中断运行
                     this.status = 0;
+                    return;
                 }
             }
         }
-    }
-
-    async customBefore() {
-
     }
 
     async addSpm(type, data?, ext?) {
