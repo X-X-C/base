@@ -13,6 +13,8 @@ export default class ErrorLog {
     time: string;
     //详情
     desc: any;
+    //级别
+    level: "error" | "logic";
 }
 
 

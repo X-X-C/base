@@ -8,20 +8,13 @@ import BaseActivityService from "./service/BaseActivityService";
 export default class App {
 
     constructor(public context: any, public apiName: string) {
-        //创建一个服务管理
         this.services = new ServiceManager(this);
-        //创建埋点对象
         this.spmService = this.services.getService(SpmService);
-        //初始化状态
         this.status = 1;
     }
 
-    //服务管理
     services: ServiceManager;
-    //APP配置
     config = {
-        //是否在请求结束后返回本次请求参数
-        returnParams: true,
         //全局请求参数
         needParams: [],
         //是否开启全局活动
@@ -29,13 +22,10 @@ export default class App {
         //是否检查活动时间
         inspectionActivity: false
     }
-    //返回值对象
     response: BaseResult;
-    //埋点对象
     spmService: SpmService;
     //埋点数组
     spmBeans = [];
-    //全局活动
     globalActivity: activityData;
     //程序状态 0--中断，1--运行
     status: 0 | 1;
@@ -46,21 +36,14 @@ export default class App {
      * @param needParams 所需参数 { name: "" }
      */
     async run(doSomething: Function, needParams: string[] = []): Promise<BaseResult> {
-        //初始化返回对象
         this.response = BaseResult.success();
         //保存原始请求参数
         let params = Utils.deepClone(this.context.data);
-        //是否返回请求参数
-        if (this.config.returnParams === true) {
-            this.response.params = params;
-        }
-        //记录值
         let result = null;
         try {
             needParams = needParams.concat(this.config.needParams);
             //判断参数是否符合条件
             result = Utils.checkParams(needParams, params);
-            //如果不符合条件直接返回
             if (result.success === false) return result;
             //运行前系统检查
             await this.before();
@@ -68,20 +51,22 @@ export default class App {
             if (this.status === 1) {
                 await doSomething.call(this.context.data);
             }
+            //运行结束添加本次埋点
+            await this.spmService.insertMany(this.spmBeans);
         } catch (e) {
-            //发现异常 初始化返回参数
-            this.response = BaseResult.fail(e.message, e);
+            if (e instanceof BaseResult) {
+                this.response = e;
+            } else {
+                this.response = BaseResult.fail(e.message, e);
+            }
             this.response.api = this.apiName;
             this.response.params = params;
-            try {
-                let errorLogService = this.services.getService(ErrorLogService)
-                await errorLogService.add(this.response);
-            } catch (e) {
-                //...
-            }
+
+            let errorLogService = this.services.getService(ErrorLogService)
+            await errorLogService.add(this.response);
+
+            throw this.response;
         }
-        //运行结束添加本次埋点
-        await this.spmService.insertMany(this.spmBeans);
         //清空埋点
         this.spmBeans = [];
         return this.response;
