@@ -64,8 +64,6 @@ export default class App {
 
             let errorLogService = this.services.getService(ErrorLogService)
             await errorLogService.add(this.response);
-
-            throw this.response;
         }
         //清空埋点
         this.spmBeans = [];
