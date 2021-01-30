@@ -18,6 +18,18 @@ export default class ErrorLogService extends BaseService<ErrorLogDao<ErrorLog>, 
         errorLog.time = this.time().common.base;
         errorLog.params = response.params;
         errorLog.desc = response.data;
+
+        switch (response.code) {
+            case 501:
+                errorLog.level = "logic";
+                break;
+
+            case 500:
+            default:
+                errorLog.level = "error";
+                break;
+        }
+
         return await super.insertOne(errorLog);
     }
 }

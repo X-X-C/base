@@ -94,10 +94,15 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
      * @param options
      */
     async edit(filter: any, options: any): Promise<number> {
+        let line = 0;
         if (Utils.cleanObj(options, false)) {
-            return await this.dao.update(filter, options);
+            line = await this.dao.update(filter, options);
         }
-        return 0;
+        if (line === 0) {
+            this.response.set501();
+            throw this.response;
+        }
+        return line;
     }
 
     /**
