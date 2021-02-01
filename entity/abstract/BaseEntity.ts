@@ -17,8 +17,13 @@ export default class BaseEntity {
         delete cur._;
         let op = compareObj(this._, cur);
         //销毁本次备份
-        delete this._;
+        this._ = cur;
         return op;
+    }
+
+    get delete_() {
+        delete this._;
+        return;
     }
 
     init(e) {
