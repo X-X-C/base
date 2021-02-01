@@ -20,4 +20,9 @@ export default class BaseEntity {
         delete this._;
         return;
     }
+
+    init(e) {
+        Object.assign(this, e);
+        return this;
+    }
 }
