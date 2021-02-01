@@ -39,6 +39,7 @@ export default class App {
         this.response = BaseResult.success();
         //保存原始请求参数
         let params = Utils.deepClone(this.context.data);
+        this.response.params = params;
         let result = null;
         try {
             needParams = needParams.concat(this.config.needParams);
