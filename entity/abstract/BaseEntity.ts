@@ -1,10 +1,6 @@
 import Utils from "../../utils/Utils";
 
 export default class BaseEntity {
-    constructor(any?) {
-        Object.assign(this, any);
-    }
-
     _: this;
 
     get optionsStart() {
@@ -23,5 +19,10 @@ export default class BaseEntity {
         //销毁本次备份
         delete this._;
         return op;
+    }
+
+    init(e) {
+        Object.assign(this, e);
+        return this;
     }
 }
