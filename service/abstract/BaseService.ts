@@ -99,8 +99,9 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
             line = await this.dao.update(filter, options);
         }
         if (line === 0) {
-            this.response.set501();
-            throw this.response;
+            let r = BaseResult.fail();
+            r.set501();
+            throw r;
         }
         return line;
     }
