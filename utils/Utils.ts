@@ -11,7 +11,7 @@ export default class Utils {
      * 判断参数是否正确
      */
     static checkParams(need: any[], real: object): BaseResult {
-        let rs = BaseResult.success();
+        let rs = BaseResult.success("");
         let keys = Object.keys(real);
         rs.success = need.every(v => {
             if (keys.indexOf(v) !== -1) {
