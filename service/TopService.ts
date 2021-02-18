@@ -112,7 +112,11 @@ export default class TopService {
     async taobaoOpentradeSpecialItemsBind(miniapp_id, item_ids, ext: any = {}): Promise<result> {
         let r = this.getResult();
         r.data = await this.top.taobaoOpentradeSpecialItemsBind(miniapp_id, item_ids, ext)
+<<<<<<< HEAD
         r.code = Number(r.data.results);
+=======
+        r.code = Number(!!r.data.results?.item_bind_result?.[0]?.bind_ok);
+>>>>>>> 6c35c149e0e966dff132624dc09bd98f794188d7
         return r;
     }
 
@@ -124,7 +128,7 @@ export default class TopService {
     async taobaoOpentradeSpecialItemsQuery(miniapp_id, ext: any = {}): Promise<result> {
         let r = this.getResult();
         r.data = await this.top.taobaoOpentradeSpecialItemsQuery(miniapp_id, ext)
-        r.code = Number(r.data.items && r.data.items.number);
+        r.code = Number(!!r.data.items?.number);
         return r;
     }
 

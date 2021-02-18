@@ -252,11 +252,7 @@ export default class Utils {
     }
 
     static toJson(any): string {
-        let r: string = JSON.stringify(any);
-        if (typeof any === "string") {
-            r = r.substring(1, r.length - 1);
-        }
-        return r;
+        return JSON.stringify(any).replace(/"/g, "");
     }
 
     /**
