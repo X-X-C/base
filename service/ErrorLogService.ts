@@ -9,27 +9,24 @@ export default class ErrorLogService extends BaseService<ErrorLogDao<ErrorLog>, 
         super(ErrorLogDao, app);
     }
 
-    async add(response: BaseResult): Promise<string> {
+    async add(e: BaseResult | any) {
         let errorLog = new ErrorLog();
         errorLog.nick = this.nick;
-        errorLog.api = response.api;
-        errorLog.message = response.message;
+        errorLog.api = this.app.apiName;
+        errorLog.message = e.message;
         errorLog.openId = this.openId;
         errorLog.time = this.time().common.base;
-        errorLog.params = response.params;
-        errorLog.desc = response.data;
-
-        switch (response.code) {
+        errorLog.params = this.response.params;
+        errorLog.desc = e;
+        switch (e.code) {
             case 501:
                 errorLog.level = "logic";
                 break;
-
             case 500:
             default:
                 errorLog.level = "error";
                 break;
         }
-
-        return await super.insertOne(errorLog);
+        await this.insertOne(errorLog);
     }
 }

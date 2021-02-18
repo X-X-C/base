@@ -55,16 +55,13 @@ export default class App {
             //运行结束添加本次埋点
             await this.spmService.insertMany(this.spmBeans);
         } catch (e) {
+            let errorLogService = this.services.getService(ErrorLogService)
+            await errorLogService.add(e);
             if (e instanceof BaseResult) {
                 this.response = e;
             } else {
                 this.response = BaseResult.fail(e.message, e);
             }
-            this.response.api = this.apiName;
-            this.response.params = params;
-
-            let errorLogService = this.services.getService(ErrorLogService)
-            await errorLogService.add(this.response);
         }
         //清空埋点
         this.spmBeans = [];
