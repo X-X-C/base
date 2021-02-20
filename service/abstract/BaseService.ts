@@ -101,6 +101,9 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         if (line === 0) {
             let r = BaseResult.fail();
             r.set501();
+            r.data = JSON.parse(JSON.stringify({
+                filter, options
+            }).replace(/\$/g, ""))
             throw r;
         }
         return line;
