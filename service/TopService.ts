@@ -12,6 +12,10 @@ export default class TopService {
     //TOP接口工具
     top: Top;
 
+    cache = {
+        vipStatus: null
+    }
+
     getResult(): result {
         return {
             code: 0,
@@ -23,10 +27,14 @@ export default class TopService {
      * 查询当前用户VIP信息
      */
     async vipStatus(): Promise<result> {
+        if (this.cache.vipStatus) {
+            return this.cache.vipStatus;
+        }
         let r = this.getResult();
         r.data = await this.top.vipStatus();
         r.data = r.data.result.member_info;
         r.code = Number(!!r.data);
+        this.cache.vipStatus = r;
         return r;
     }
 
