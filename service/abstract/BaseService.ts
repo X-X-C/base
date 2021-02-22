@@ -61,14 +61,6 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
         return this.app.globalActivity;
     }
 
-    get options() {
-        return {
-            $push: <E>{},
-            $set: <E>{},
-            $inc: <E>{}
-        }
-    }
-
     /**
      * 新增一条数据
      * @param entity
