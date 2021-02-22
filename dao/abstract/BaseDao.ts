@@ -73,13 +73,18 @@ export default class BaseDao<T> {
      * 获取访问链接
      * @param fileId
      */
-    async getTempFileUrl(fileId): Promise<string> {
+    async getMultipleTempFileUrl(fileId): Promise<string[]> {
         //获取链接
         let url = await this.context.cloud.file.getTempFileURL({
-            fileId: [fileId]
+            fileId: fileId
         })
         //返回链接
-        return url[0].url.replace(/-internal/g, "");
+        return url.map(v=>v.url.replace(/-internal/g, ""));
+    }
+
+
+    async getTempFileUrl(fileId): Promise<string> {
+        return (await this.getMultipleTempFileUrl(fileId))[0];
     }
 
 }
