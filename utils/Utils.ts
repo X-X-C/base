@@ -348,4 +348,16 @@ export default class Utils {
         }
         return compareRs;
     }
+
+
+    static secretStr(str: string, {
+        delimiter = "*",
+        hideStart = 1,
+        hideEnd = str.length - 1,
+        hideLength = hideEnd - hideStart
+    } = {}) {
+        let finalStr = str.split("");
+        finalStr.splice(hideStart, hideEnd - hideStart, ...new Array(hideLength || 1).fill(delimiter));
+        return finalStr.join("");
+    }
 }

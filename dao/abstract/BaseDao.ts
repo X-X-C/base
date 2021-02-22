@@ -1,14 +1,17 @@
 export default class BaseDao<T> {
 
-    constructor(public context: any, public table: string) {
+    constructor(public context: any) {
+    }
+
+    db;
+
+    initTb(table) {
         try {
-            this.db = context.cloud.db.collection(table);
+            this.db = this.context.cloud.db.collection(table);
         } catch (e) {
             throw "获取数据库连接失败";
         }
     }
-
-    db;
 
     async delete(filter: any): Promise<number> {
         return await this.db.deleteMany(filter);
