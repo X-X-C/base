@@ -3,6 +3,8 @@ import * as xlsx from "xlsx";
 // @ts-ignore
 import * as randombyweights from "randombyweights";
 // @ts-ignore
+import * as uuid from "uuid";
+// @ts-ignore
 import * as qr from "qr-image";
 import BaseResult from "../dto/BaseResult";
 
@@ -163,6 +165,11 @@ export default class Utils {
             unique += source[Math.floor(Math.random() * source.length)];
         }
         return unique;
+    }
+
+    static uuid = {
+        v1: uuid.v1(),
+        v4: uuid.v4()
     }
 
     static type = {
