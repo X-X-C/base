@@ -150,7 +150,7 @@ export default class Utils {
      * @param repeat 重复次数
      * @param type 格式字符串,有效字符串 A a 0
      */
-    randomStr(
+    static randomStr(
         {
             repeat = 1,
             type = ""
