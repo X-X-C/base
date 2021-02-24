@@ -146,25 +146,45 @@ export default class Utils {
     }
 
     /**
-     * 获取的随机字符串长度
-     * @param length
+     *  获取随机字符串
+     * @param repeat 重复次数
+     * @param type 格式字符串,有效字符串 A a 0
      */
-    static getUniqueStr(length: number): string {
-        let unique = '';
-        let source = [];
-        //得到 0-9  A-Z  a-z
-        for (let i = 0; i < 123; i++) {
-            if (i >= 0 && i < 10) {
-                source.push(i);
-            } else if ((i >= 65 && i < 91) || (i >= 97 && i < 123)) {
-                source.push(String.fromCharCode(i));
+    randomStr(
+        {
+            repeat = 1,
+            type = ""
+        } = {}
+    ): string {
+        let AZ = [65, 90],
+            az = [97, 122],
+            number = [48, 57],
+            str = "";
+        for (let i = 0; i < repeat; i++) {
+            if (!type) {
+                let target = [number, AZ, az][Math.floor(Math.random() * 3)];
+                let char = Math.floor(Math.random() * (target[1] - target[0] + 1) + target[0]);
+                str += String.fromCharCode(char)
+            } else {
+                for (const t of type) {
+                    let target;
+                    switch (t) {
+                        case "A":
+                            target = AZ;
+                            break
+                        case "a":
+                            target = az;
+                            break
+                        case "0":
+                            target = number;
+                    }
+                    if (target) {
+                        str += String.fromCharCode(Math.floor(Math.random() * (target[1] - target[0] + 1) + target[0]));
+                    }
+                }
             }
         }
-        //开始生成随机码
-        for (let i = 0; i < length; i++) {
-            unique += source[Math.floor(Math.random() * source.length)];
-        }
-        return unique;
+        return str;
     }
 
     static uuid = {
