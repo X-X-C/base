@@ -63,7 +63,7 @@ export default class Top {
             right_ename: ename,
             receiver_id: this.context.openId,//用户openid
             user_type: "taobao",//固定参数
-            unique_id: Utils.getUniqueStr(20),
+            unique_id: Utils.uuid.v1(),
             app_name: "mtop"
         }
         return await this.invoke("alibaba.benefit.send", params, ext);
