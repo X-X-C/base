@@ -4,6 +4,7 @@ import ErrorLogService from "./service/ErrorLogService";
 import ServiceManager from "./service/abstract/ServiceManager";
 import SpmService from "./service/SpmService";
 import BaseActivityService from "./service/BaseActivityService";
+import Spm from "./entity/Spm";
 
 export default class App {
 
@@ -25,8 +26,7 @@ export default class App {
     response: BaseResult;
     spmService: SpmService;
     //埋点数组
-    spmBeans = [];
-    successSpmBeans = [];
+    spmBeans: Spm[] = [];
     globalActivity: activityData;
     //程序状态 0--中断，1--运行
     status: 0 | 1;
@@ -53,13 +53,8 @@ export default class App {
             if (this.status === 1) {
                 await doSomething.call(this.context.data);
             }
-            if (this.response.code !== BaseResult.STATUS_SUCCESS) {
-                this.successSpmBeans.length = 0;
-            }
             //运行结束添加本次埋点
-            await this.spmService.insertMany(this.spmBeans.concat(
-                this.successSpmBeans
-            ));
+            await this.spmService.insertMany(this.spmBeans);
         } catch (e) {
             let errorLogService = this.services.getService(ErrorLogService)
             await errorLogService.add(e);

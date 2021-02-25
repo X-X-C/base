@@ -1,5 +1,6 @@
 import Utils from "../../utils/Utils";
 import SpmService from "../../service/SpmService";
+import App from "../../App";
 
 export default class BaseEntity {
     _: this;
@@ -7,7 +8,6 @@ export default class BaseEntity {
         arr: "allMatch" | "allReplace",
         num: "set" | "inc",
     }
-    _spmService: SpmService
 
     get optionsStart() {
         this.delete_;
@@ -47,7 +47,6 @@ export default class BaseEntity {
 
     get pure() {
         this.delete_;
-        delete this._spmService;
         return this;
     }
 
