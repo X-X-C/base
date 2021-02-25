@@ -26,6 +26,7 @@ export default class App {
     spmService: SpmService;
     //埋点数组
     spmBeans = [];
+    successSpmBeans = [];
     globalActivity: activityData;
     //程序状态 0--中断，1--运行
     status: 0 | 1;
@@ -52,8 +53,13 @@ export default class App {
             if (this.status === 1) {
                 await doSomething.call(this.context.data);
             }
+            if (this.response.code !== BaseResult.STATUS_SUCCESS) {
+                this.successSpmBeans.length = 0;
+            }
             //运行结束添加本次埋点
-            await this.spmService.insertMany(this.spmBeans);
+            await this.spmService.insertMany(this.spmBeans.concat(
+                this.successSpmBeans
+            ));
         } catch (e) {
             let errorLogService = this.services.getService(ErrorLogService)
             await errorLogService.add(e);
@@ -73,7 +79,7 @@ export default class App {
         if (this.config.globalActivity === true && !this.globalActivity) {
             let activityService = this.getService(BaseActivityService);
             //设置全局活动
-            this.globalActivity = await activityService.getActivity(activityService.pureFiled);
+            this.globalActivity = await activityService.getActivity();
             //检查活动状态
             if (this.config.inspectionActivity === true) {
                 //不在活动范围内

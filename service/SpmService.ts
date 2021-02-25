@@ -1,6 +1,7 @@
 import BaseService from "./abstract/BaseService";
 import Spm from "../entity/Spm";
 import App from "../App";
+import BaseResult from "../dto/BaseResult";
 
 export default class SpmService extends BaseService<Spm> {
     constructor(app: App) {
@@ -54,5 +55,15 @@ export default class SpmService extends BaseService<Spm> {
         }
         Object.assign(spm, ext);
         return spm;
+    }
+
+    /**
+     * 成功时才会埋点的点
+     * @param type
+     * @param data
+     * @param ext
+     */
+    async successSpmBean(type, data?, ext?) {
+        this.app.successSpmBeans.push(await this.simpleBean(type, data, ext));
     }
 }
