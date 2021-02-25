@@ -1,12 +1,11 @@
-import ErrorLogDao from "../dao/ErrorLogDao";
 import ErrorLog from "../entity/ErrorLog";
 import BaseService from "./abstract/BaseService";
 import App from "../App";
 import BaseResult from "../dto/BaseResult";
 
-export default class ErrorLogService extends BaseService<ErrorLogDao<ErrorLog>, ErrorLog> {
+export default class ErrorLogService extends BaseService<ErrorLog> {
     constructor(app: App) {
-        super(ErrorLogDao, app);
+        super("errorLogs", app);
     }
 
     async add(e: BaseResult | any) {
