@@ -285,20 +285,20 @@ export default class Utils {
     /**
      * 比较两个对象，返回两个比较后的直接条件
      * !!!!!!慎用!!!!!!
-     * @param origin
-     * @param target
-     * @param extKey
-     * @param compareRs
      */
     static compareObj(
         origin,
         target,
-        extKey: string = "",
-        compareRs: mongodbOptions = {
-            $inc: {},
-            $push: {},
-            $set: {}
-        }
+        {
+            extKey = "",
+            arrayHandle = <"allMatch" | "allReplace">"allMatch",
+            numberHandle = <"set" | "inc">"set",
+            compareRs = {
+                $inc: {},
+                $push: {},
+                $set: {}
+            },
+        } = {},
     ) {
         let {type, getType, compareObj} = Utils;
         for (let targetKey in target) {
@@ -311,65 +311,86 @@ export default class Utils {
                 key = extKey + "." + key;
             }
             //如果两个对象不相同
-            if (
-                JSON.stringify(targetV) !== JSON.stringify(originV)
-            ) {
+            if (JSON.stringify(targetV) !== JSON.stringify(originV)) {
                 if (
-                    originType === targetType &&
-                    [type.object, type.number, type.array].indexOf(originType) !== -1
+                    originType !== targetType ||
+                    [type.object, type.number, type.array].indexOf(originType) === -1
                 ) {
+                    //如果类型不同直接设置
+                    compareRs.$set[key] = targetV;
+                }
+                //如果类型相同，且在可控范围内
+                else {
                     //如果是对象
                     if (originType === type.object) {
                         //继续往下匹配
                         compareObj(
                             originV,
                             targetV,
-                            key,
-                            compareRs
+                            {
+                                extKey: key,
+                                compareRs,
+                                arrayHandle,
+                                numberHandle
+                            }
                         )
                     } else if (originType === type.number) {
-                        //数值相加
-                        compareRs.$inc[key] = targetV - originV;
-                    } else if (originType === type.array) {
-                        compareRs.$push[key] = {
-                            $each: []
+                        //相加的方式
+                        if (numberHandle === "inc") {
+                            compareRs.$inc[key] = targetV - originV;
                         }
-                        targetV.forEach((targetVElement, index) => {
-                            let originArrayV = originV[index];
-                            //如果两个值是不相等的
-                            if (JSON.stringify(originArrayV) !== JSON.stringify(targetVElement)) {
-                                let targetVElementType = getType(targetVElement);
-                                let originArrayVType = getType(originArrayV);
-                                //如果目标不存在
-                                if (originArrayVType === getType(undefined)) {
-                                    compareRs.$push[key].$each.push(targetVElement);
-                                }
-                                //如果类型为对象
-                                else if (
-                                    targetVElementType === originArrayVType &&
-                                    originArrayVType === type.object
-                                ) {
-                                    //继续往下匹配
-                                    compareObj(
-                                        originArrayV,
-                                        targetVElement,
-                                        key + "." + index,
-                                        compareRs
-                                    )
-                                }
-                                //如果类型不为对象
-                                else {
-                                    compareRs.$set[key + "." + index] = targetVElement;
-                                }
+                        //直接设置的方式
+                        else if (numberHandle === "set") {
+                            compareRs.$set[key] = targetV;
+                        }
+                    } else if (originType === type.array) {
+                        //尽可能的匹配
+                        if (arrayHandle === "allMatch") {
+                            compareRs.$push[key] = {
+                                $each: []
                             }
-                        })
-                        if (compareRs.$push[key].$each.length <= 0) {
-                            delete compareRs.$push[key];
+                            targetV.forEach((targetVElement, index) => {
+                                let originArrayV = originV[index];
+                                //如果两个值是不相等的
+                                if (JSON.stringify(originArrayV) !== JSON.stringify(targetVElement)) {
+                                    let targetVElementType = getType(targetVElement);
+                                    let originArrayVType = getType(originArrayV);
+                                    //如果目标不存在
+                                    if (originArrayVType === getType(undefined)) {
+                                        compareRs.$push[key].$each.push(targetVElement);
+                                    }
+                                    //如果类型为对象
+                                    else if (
+                                        targetVElementType === originArrayVType &&
+                                        originArrayVType === type.object
+                                    ) {
+                                        //继续往下匹配
+                                        compareObj(
+                                            originArrayV,
+                                            targetVElement,
+                                            {
+                                                extKey: key + "." + index,
+                                                compareRs,
+                                                arrayHandle,
+                                                numberHandle
+                                            }
+                                        )
+                                    }
+                                    //如果类型不为对象
+                                    else {
+                                        compareRs.$set[key + "." + index] = targetVElement;
+                                    }
+                                }
+                            })
+                            if (compareRs.$push[key].$each.length <= 0) {
+                                delete compareRs.$push[key];
+                            }
+                        }
+                        //全部替换
+                        else if (arrayHandle === "allReplace") {
+                            compareRs.$set[key] = targetV;
                         }
                     }
-                } else {
-                    //如果类型不同直接设置
-                    compareRs.$set[key] = targetV;
                 }
             }
         }
