@@ -1,18 +1,19 @@
-import BaseDao from "../../dao/abstract/BaseDao";
 import Time from "../../utils/Time";
 import Utils from "../../utils/Utils";
 import ServiceManager from "./ServiceManager";
 import App from "../../App";
 import BaseResult from "../../dto/BaseResult";
+import BaseDao from "../../dao/BaseDao";
 
-export default abstract class BaseService<T extends BaseDao<E>, E extends object> {
-    protected constructor(Dao: new(...args) => T, app: App) {
-        this.dao = new Dao(app.context);
+export default abstract class BaseService<E extends object> {
+    protected constructor(tb: string, app: App) {
+        this.dao = new BaseDao(app.context);
+        this.dao.initTb(tb);
         this.app = app;
     }
 
     protected app: App;
-    protected dao: T;
+    protected dao: BaseDao<E>;
     protected time = (date: any = new Date()): Time => {
         return new Time(date);
     };
@@ -84,13 +85,14 @@ export default abstract class BaseService<T extends BaseDao<E>, E extends object
      * 编辑
      * @param filter
      * @param options
+     * @param ignore
      */
-    async edit(filter: any, options: any): Promise<number> {
+    async edit(filter: any, options: any, ignore: boolean = false): Promise<number> {
         let line = 0;
         if (Utils.cleanObj(options, false)) {
             line = await this.dao.update(filter, options);
         }
-        if (line === 0) {
+        if (line === 0 && ignore === false) {
             let r = BaseResult.fail();
             r.set501();
             r.data = JSON.parse(JSON.stringify({

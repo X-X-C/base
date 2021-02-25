@@ -1,18 +1,9 @@
-/**
- * @param code
- * -1-->没有此活动
- * 0-->活动未开始
- * 1-->活动进行中
- * 2-->活动已结束
- * @param data 活动数据
- */
 import BaseService from "./abstract/BaseService";
-import ActivityDao from "../dao/ActivityDao";
 import App from "../App";
 
-export default class BaseActivityService extends BaseService<ActivityDao<any>, any> {
+export default class BaseActivityService extends BaseService<any> {
     constructor(app: App) {
-        super(ActivityDao, app);
+        super("activities", app);
     }
 
     activity: activityData;

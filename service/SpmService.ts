@@ -1,13 +1,10 @@
-import SpmDao from "../dao/SpmDao";
 import BaseService from "./abstract/BaseService";
 import Spm from "../entity/Spm";
 import App from "../App";
-// @ts-ignore
-import gmSpm from "gm-spm";
 
-export default class SpmService extends BaseService<SpmDao<Spm>, Spm> {
+export default class SpmService extends BaseService<Spm> {
     constructor(app: App) {
-        super(SpmDao, app);
+        super("spm", app);
     }
 
     /**
@@ -57,25 +54,5 @@ export default class SpmService extends BaseService<SpmDao<Spm>, Spm> {
         }
         Object.assign(spm, ext);
         return spm;
-    }
-
-    /**
-     * 新增统计
-     * @param type
-     * @param data
-     * @param ext
-     */
-    async addSpm(type: string, data?, ext?): Promise<any> {
-        this.context.data.spmData = {
-            type,
-            data: {
-                ...this.context.data,
-                ...data
-            }
-        }
-        this.context.data.extraField = {
-            ...ext
-        }
-        await gmSpm.spm.spm(this.context);
     }
 }
