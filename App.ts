@@ -17,7 +17,9 @@ export default class App {
     services: ServiceManager;
     config = {
         //全局请求参数
-        needParams: [],
+        needParams: <checkType>{},
+        //每次请求所需参数
+        runNeedParams: <checkType>{},
         //是否开启全局活动
         globalActivity: false,
         //是否检查活动时间
@@ -31,22 +33,33 @@ export default class App {
     //程序状态 0--中断，1--运行
     status: 0 | 1;
 
+    set globalNeedParams(v: checkType) {
+        this.config.needParams = v;
+    }
+
+    set runNeedParams(v: checkType) {
+        this.config.runNeedParams = v;
+    }
+
     /**
      * 运行方法 可以捕获异常并处理
      * @param doSomething
-     * @param needParams 所需参数 { name: "" }
      */
-    async run(doSomething: Function, needParams: string[] = []): Promise<BaseResult> {
+    async run(doSomething: Function): Promise<BaseResult> {
         this.response = BaseResult.success();
         //保存原始请求参数
         let params = Utils.deepClone(this.context.data);
         this.response.params = params;
         let result = null;
         try {
-            needParams = needParams.concat(this.config.needParams);
-            //判断参数是否符合条件
-            result = Utils.checkParams(needParams, params);
+            let needParams = {
+                ...this.config.needParams,
+                ...this.config.runNeedParams
+            }
+            result = Utils.checkNeed(params, needParams);
             if (result.success === false) return result;
+            //重置运行参数
+            this.runNeedParams = {};
             //运行前系统检查
             await this.before();
             //系统状态正常

@@ -9,19 +9,28 @@ import * as qr from "qr-image";
 import BaseResult from "../dto/BaseResult";
 
 export default class Utils {
-    /**
-     * 判断参数是否正确
-     */
-    static checkParams(need: any[], real: object): BaseResult {
+
+    static checkNeed(real: object, need: object): BaseResult {
         let rs = BaseResult.success("");
-        let keys = Object.keys(real);
-        rs.success = need.every(v => {
-            if (keys.indexOf(v) !== -1) {
-                return true;
+        let needEntries = Object.entries(need);
+        for (let n of needEntries) {
+            if (typeof real[n[0]] === "undefined") {
+                rs.success = false;
+                rs.message = "缺少参数" + n[0];
+                break;
             }
-            rs.message += "缺少参数" + v;
-            rs.success = false;
-        });
+            if (n[1] !== "any") {
+                if (n[1] !== "array") {
+                    rs.success = typeof real[n[0]] === n[1];
+                } else {
+                    rs.success = Array.isArray(real[n[0]]);
+                }
+                if (rs.success === false) {
+                    rs.message = `${n[0]}类型应为${n[1]}`
+                    break;
+                }
+            }
+        }
         return rs;
     }
 

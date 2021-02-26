@@ -82,3 +82,7 @@ type orderExt = {
 interface other {
     [key: string]: any
 }
+
+interface checkType {
+    [key: string]: "number" | "array" | "string" | "object" | "boolean" | "any"
+}
