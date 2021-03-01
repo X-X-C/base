@@ -4,9 +4,19 @@ import App from "../../App";
 
 export default class BaseEntity {
     _: this;
-    compareParam: {
-        arr: "allMatch" | "allReplace",
-        num: "set" | "inc",
+    _data: {
+        compareParam?: {
+            arr: "allMatch" | "allReplace",
+            num: "set" | "inc",
+        }
+    }
+
+    get compareParam() {
+        return this._data.compareParam;
+    }
+
+    set compareParam(v) {
+        this._data.compareParam = v;
     }
 
     get optionsStart() {
@@ -46,8 +56,10 @@ export default class BaseEntity {
     }
 
     get pure() {
-        this.delete_;
-        return this;
+        let user = Utils.deepClone(this);
+        delete user._;
+        delete user._data;
+        return user;
     }
 
     init(e) {
