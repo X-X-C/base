@@ -51,7 +51,7 @@ export default class BaseEntity {
 
     get delete_() {
         delete this._;
-        delete this.compareParam;
+        delete this._data.compareParam;
         return;
     }
 
