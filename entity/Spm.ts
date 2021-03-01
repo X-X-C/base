@@ -19,6 +19,4 @@ export default class Spm {
     dayIndex: number;
     //总index
     totalIndex: number;
-    //是否成功
-    success: boolean = true;
 }

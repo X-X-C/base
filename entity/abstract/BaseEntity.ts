@@ -1,6 +1,4 @@
 import Utils from "../../utils/Utils";
-import SpmService from "../../service/SpmService";
-import App from "../../App";
 
 export default class BaseEntity {
     _: this;
@@ -9,7 +7,7 @@ export default class BaseEntity {
             arr: "allMatch" | "allReplace",
             num: "set" | "inc",
         }
-    }
+    } = {}
 
     get compareParam() {
         return this._data.compareParam;
@@ -21,11 +19,11 @@ export default class BaseEntity {
 
     get optionsStart() {
         this.delete_;
-        this._ = Utils.deepClone(this);
         this.compareParam = {
             arr: "allMatch",
             num: "inc"
         }
+        this._ = Utils.deepClone(this);
         return;
     }
 
