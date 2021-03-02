@@ -30,6 +30,7 @@ export default class SpmService extends BaseService<Spm> {
         spm.date = this.time().format("YYYY-MM-DD");
         spm.nick = this.context.userNick || "";
         spm.type = type;
+        spm.mixNick = this.mixNick;
         spm.data = {
             ...this.data,
             ...data
