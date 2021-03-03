@@ -38,6 +38,7 @@ export default class SpmService extends BaseService<Spm> {
         spm.openId = this.openId;
         spm.time = this.time().common.base;
         spm.timestamp = this.time().common.x;
+        Object.assign(spm, ext);
         if (!simple) {
             //天index
             spm.dayIndex = (await this.count({
@@ -53,7 +54,6 @@ export default class SpmService extends BaseService<Spm> {
                 activityId: this.activityId
             })) + 1;
         }
-        Object.assign(spm, ext);
         return spm;
     }
 }
