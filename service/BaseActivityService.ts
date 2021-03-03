@@ -46,7 +46,7 @@ export default class BaseActivityService extends BaseService<any> {
         }
     }
 
-    protected status(activity: any): number {
+    status(activity: any): number {
         //没有活动
         if (!activity || activity.isDel !== 0) {
             return -1;
