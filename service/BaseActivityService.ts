@@ -19,36 +19,36 @@ export default class BaseActivityService extends BaseService<any> {
                 endTime: 1,
                 config: 1,
                 data: 1
+            },
+            filter = <activity | other>{
+                _id: this.activityId
             }
         } = {}
     ): Promise<activityData> {
         //如果目标活动已经被实例化
-        if (this.activity &&
+        if (
+            this.activity &&
             this.activity.code !== -1 &&
-            this.activity.data._id === this.activityId) {
+            this.activity.data._id === this.activityId
+        ) {
+            //直接返回活动
             return this.activity;
         } else {
-            //过滤参数
-            let filter: any = {
-                isDel: 0,
-                _id: this.activityId,
-            };
             //查询活动
             let activity = await super.get(filter, {
                 projection
             });
-            //返回值
-            let result: any = {};
-            result.code = this.status(activity);
-            result.data = activity;
-            this.activity = result;
+            this.activity = {
+                code: this.status(activity),
+                data: activity
+            }
             return this.activity;
         }
     }
 
     protected status(activity: any): number {
         //没有活动
-        if (!activity) {
+        if (!activity || activity.isDel !== 0) {
             return -1;
         }
         //活动未开始
