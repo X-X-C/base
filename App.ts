@@ -25,20 +25,28 @@ export default class App {
         //是否检查活动时间
         inspectionActivity: false
     }
-    response: BaseResult;
     spmService: SpmService;
+    // 全局返回值
+    response: BaseResult;
     //埋点数组
     spmBeans: Spm[] = [];
+    //全局活动
     globalActivity: activityData;
     //程序状态 0--中断，1--运行
     status: 0 | 1;
 
-    set globalNeedParams(v: checkType) {
-        this.config.needParams = v;
-    }
-
     set runNeedParams(v: checkType) {
         this.config.runNeedParams = v;
+    }
+
+    get setGlobalActivity() {
+        this.config.globalActivity = true;
+        return;
+    }
+
+    get setInspectionActivity() {
+        this.config.inspectionActivity = true;
+        return;
     }
 
     /**
@@ -83,20 +91,29 @@ export default class App {
     }
 
     async before() {
-        //如果配置了全局活动，且没有获取过
-        if (this.config.globalActivity === true && !this.globalActivity) {
-            let activityService = this.getService(BaseActivityService);
-            //设置全局活动
-            this.globalActivity = await activityService.getActivity();
-            //检查活动状态
-            if (this.config.inspectionActivity === true) {
-                //不在活动范围内
-                if (this.globalActivity.code !== 1) {
-                    this.response.set201();
-                    this.status = 0;
-                    return;
-                }
+        let setGlobalActivity = async () => {
+            if (!this.globalActivity) {
+                let activityService = this.getService(BaseActivityService);
+                this.globalActivity = await activityService.getActivity();
             }
+        }
+        let inspectionActivity = async () => {
+            await setGlobalActivity();
+            if (this.globalActivity.code !== 1) {
+                this.response.set201();
+                this.status = 0;
+            }
+        }
+        let inspection = async (f: Function) => {
+            if (this.status === 1) {
+                await f();
+            }
+        }
+        if (this.config.globalActivity === true) {
+            await setGlobalActivity();
+        }
+        if (this.config.inspectionActivity === true) {
+            await inspection(inspectionActivity);
         }
     }
 
