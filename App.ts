@@ -44,7 +44,7 @@ export default class App {
         return;
     }
 
-    get setInspectionActivity() {
+    get inspectionActivity() {
         this.config.inspectionActivity = true;
         return;
     }
