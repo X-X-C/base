@@ -37,6 +37,16 @@ export default class BaseEntity {
         return;
     }
 
+    get optionsNumInc() {
+        this.compareParam.num = "inc";
+        return;
+    }
+
+    get optionsArrAllMatch() {
+        this.compareParam.arr = "allMatch";
+        return;
+    }
+
     get optionsEnd() {
         let {deepClone, compareObj} = Utils;
         let cur = deepClone(this);
