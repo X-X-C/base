@@ -10,10 +10,12 @@ export default abstract class BaseService<E extends object> {
         this.dao = new BaseDao(app.context);
         this.dao.initTb(tb);
         this.app = app;
+        this.editStrict = true;
     }
 
     protected app: App;
     protected dao: BaseDao<E>;
+    protected editStrict: boolean;
     protected time = (date: any = new Date()): Time => {
         return new Time(date);
     };
@@ -48,6 +50,16 @@ export default abstract class BaseService<E extends object> {
 
     get activityId(): string {
         return this.data.activityId;
+    }
+
+    get setStrictEdit() {
+        this.editStrict = true;
+        return;
+    }
+
+    get setLooseEdit() {
+        this.editStrict = false;
+        return;
     }
 
     getService<C extends { [prop: string]: any }>(target: (new (...args) => C)): C {
@@ -87,12 +99,12 @@ export default abstract class BaseService<E extends object> {
      * @param options
      * @param ignore
      */
-    async edit(filter: any, options: any, ignore: boolean = false): Promise<number> {
+    async edit(filter: any, options: any): Promise<number> {
         let line = 0;
         if (Utils.cleanObj(options, false)) {
             line = await this.dao.update(filter, options);
         }
-        if (line === 0 && ignore === false) {
+        if (line === 0 && this.editStrict === true) {
             let r = BaseResult.fail();
             r.set501();
             r.data = JSON.parse(JSON.stringify({
