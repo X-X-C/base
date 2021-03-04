@@ -35,6 +35,10 @@ export default class App {
     //程序状态 0--中断，1--运行
     status: 0 | 1;
 
+    set globalNeedParams(v: checkType) {
+        this.config.needParams = v;
+    }
+
     set runNeedParams(v: checkType) {
         this.config.runNeedParams = v;
     }
