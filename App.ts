@@ -113,20 +113,6 @@ export default class App {
     }
 
     /**
-     * 清空指定的表
-     * @param tbs
-     */
-    async cleanTables(tbs: any[] = []): Promise<string> {
-        let result = null, data = "";
-        for (const tb of tbs) {
-            result = await this.db(tb).deleteMany({_id: {$ne: 0}});
-            data += `成功删除${tb}下的${result}条数据`;
-            result = null;
-        }
-        return data;
-    }
-
-    /**
      * 获取数据库连接
      * @param tb 表名
      */
