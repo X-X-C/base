@@ -26,7 +26,7 @@ interface activityConfig {
             num: number,
             type: string
         },
-        prizeList: any[]
+        prizeList: configPrize[]
     },
     fixedPrizeList: configPrize[],
     assistance: configPrize,
@@ -38,7 +38,7 @@ interface activityConfig {
 
 interface configPrize {
     id: string,
-    type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point'
+    type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point' | "noprize"
     stock: number
     condition: {
         num: number,
