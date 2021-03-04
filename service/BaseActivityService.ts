@@ -18,7 +18,8 @@ export default class BaseActivityService extends BaseService<any> {
                 startTime: 1,
                 endTime: 1,
                 config: 1,
-                data: 1
+                data: 1,
+                isDel: 1
             },
             filter = <activity | other>{
                 _id: this.activityId
