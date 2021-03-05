@@ -77,8 +77,7 @@ export default class Utils {
      */
     static parseExcel(buffer, {
         defineHeader = {},
-        who = 0,
-        ext = {}
+        who = 0
     }): any[] {
         let workbook = xlsx.read(buffer, {
             type: "buffer",
@@ -118,7 +117,7 @@ export default class Utils {
             type: "buffer"
         });
         sheet = workbook.Sheets[workbook.SheetNames[who]];
-        let rs = xlsx.utils.sheet_to_json(sheet, ext);
+        let rs = xlsx.utils.sheet_to_json(sheet);
         if (!Utils.isBlank(defineHeader)) {
             //映射对应的键
             rs = rs.map(v => {
