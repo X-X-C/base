@@ -51,10 +51,10 @@ export default class Utils {
      * 将excel里的时间转换为标准时间格式
      * @param number
      */
-    static parseExcelDate(number: number): false | string {
+    static parseExcelDate(number: number): any {
         //不是数字
-        if (isNaN(Number(number)) === true) {
-            return false;
+        if (typeof number !== "number") {
+            return number;
         }
         let date = xlsx.SSF.parse_date_code(number);
         //返回
@@ -75,49 +75,66 @@ export default class Utils {
      * @param who  读取第几张表
      * @param ext
      */
-    static parseExcel(buffer, defineHeader: any = {}, who: number = 0, ext: any = {}): any {
-        let workbook;
-        //定义了header,检查header
+    static parseExcel(buffer, {
+        defineHeader = {},
+        who = 0,
+        ext = {}
+    }): any[] {
+        let workbook = xlsx.read(buffer, {
+            type: "buffer",
+            sheetRows: 2,
+            cellDates: true
+        });
+        let sheet = workbook.Sheets[workbook.SheetNames[who]];
+        let firstLine: any = xlsx.utils.sheet_to_json(sheet)[0];
+        //定义了表头，检查字段
         if (!Utils.isBlank(defineHeader)) {
-            //获取表头
-            workbook = xlsx.read(buffer, {
-                type: "buffer",
-                sheetRows: 1
-            });
-            //检查表头是否包含所需字段
-            let header = workbook.Sheets[workbook.SheetNames[who]];
             //表头数组
-            header = xlsx.utils.sheet_to_json(header, {
-                header: 1
-            });
+            let header = Object.keys(firstLine);
             //是否缺少字段
-            Object.values(defineHeader).every(v => {
+            Object.values(defineHeader).every((v: any) => {
                 if (header.indexOf(v) !== -1) {
                     return true;
                 }
                 throw Error(`缺少字段[${v}]`);
             });
         }
-        //开始正式操作
+        //获取需要转换字段
+        let convertFields = {
+            num: [],
+            date: []
+        }
+        firstLine = Object.entries(firstLine);
+        for (const e of firstLine) {
+            if (typeof e[1] === "number") {
+                convertFields.num.push(e[0]);
+            }
+            if (e[1] instanceof Date) {
+                convertFields.date.push(e[0]);
+            }
+        }
+        //读取文件
         workbook = xlsx.read(buffer, {
             type: "buffer"
         });
-        //读取表的数据
-        let rs = workbook.Sheets[workbook.SheetNames[who]];
-        rs = xlsx.utils.sheet_to_json(rs, ext);
+        sheet = workbook.Sheets[workbook.SheetNames[who]];
+        let rs = xlsx.utils.sheet_to_json(sheet, ext);
         if (!Utils.isBlank(defineHeader)) {
             //映射对应的键
             rs = rs.map(v => {
                 let o = {};
                 for (let key in defineHeader) {
                     let targetKey = defineHeader[key];
-                    //如果对应字段存在
-                    if (v[targetKey] !== undefined) {
-                        if (typeof v[targetKey] === "number") {
-                            v[targetKey] = String(v[targetKey]);
-                        }
-                        o[key] = v[targetKey];
+                    let targetV = v[targetKey];
+                    //数字字段，转换为字符串
+                    if (convertFields.num.indexOf(targetKey) !== -1) {
+                        targetV = String(targetV);
                     }
+                    //日期字段
+                    else if (convertFields.date.indexOf(targetKey) !== -1) {
+                        targetV = Utils.parseExcelDate(targetV)
+                    }
+                    o[key] = targetV;
                 }
                 return o;
             });
