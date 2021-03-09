@@ -24,20 +24,24 @@ export default class BaseResult {
 
 
     //基础成功返回对象
-    public static success({
-                              message = "成功",
-                              data = {},
-                              success = true
-                          } = {}): BaseResult {
+    public static success(
+        {
+            message = "成功",
+            data = {},
+            success = true
+        } = {}
+    ): BaseResult {
         return new BaseResult(message, data, success, this.STATUS_SUCCESS);
     }
 
     //基础失败返回对象
-    public static fail({
-                           message = "错误",
-                           data = {},
-                           code = this.STATUS_FAIL
-                       } = {}): BaseResult {
+    public static fail(
+        {
+            message = "错误",
+            data = {},
+            code = this.STATUS_FAIL
+        } = {}
+    ): BaseResult {
         return new BaseResult(message, data, false, code);
     }
 
