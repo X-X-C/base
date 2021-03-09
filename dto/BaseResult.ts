@@ -24,12 +24,20 @@ export default class BaseResult {
 
 
     //基础成功返回对象
-    public static success(message: string = "成功", data: any = {}, success: boolean = true): BaseResult {
+    public static success({
+                              message = "成功",
+                              data = {},
+                              success = true
+                          } = {}): BaseResult {
         return new BaseResult(message, data, success, this.STATUS_SUCCESS);
     }
 
     //基础失败返回对象
-    public static fail(message: string = "错误", data: any = {}, code: number = this.STATUS_FAIL): BaseResult {
+    public static fail({
+                           message = "错误",
+                           data = {},
+                           code = this.STATUS_FAIL
+                       } = {}): BaseResult {
         return new BaseResult(message, data, false, code);
     }
 
@@ -39,12 +47,12 @@ export default class BaseResult {
     }
 
     public set501() {
-        this.message = '意外错误';
+        this.message = '服务异常';
         this.code = BaseResult.NOT_AS_EXPECT;
     }
 
     public set222(message?: string) {
-        this.message = message || "操作失败";
+        this.message = message || "网络繁忙";
         this.code = BaseResult.LOGIC_FAIL;
     }
 }

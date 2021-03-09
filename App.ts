@@ -86,7 +86,10 @@ export default class App {
             if (e instanceof BaseResult) {
                 this.response = e;
             } else {
-                this.response = BaseResult.fail(e.message, e);
+                this.response = BaseResult.fail({
+                    message: e.message,
+                    data: e
+                });
             }
         }
         //清空埋点
