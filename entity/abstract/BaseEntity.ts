@@ -51,6 +51,7 @@ export default class BaseEntity {
         let {deepClone, compareObj} = Utils;
         let cur = deepClone(this);
         delete cur._;
+        delete cur._data;
         return compareObj(this._, cur, {
             arrayHandle: this.compareParam.arr,
             numberHandle: this.compareParam.num
