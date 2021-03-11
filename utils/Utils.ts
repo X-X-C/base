@@ -205,6 +205,8 @@ export default class Utils {
                     }
                     if (target) {
                         str += String.fromCharCode(Math.floor(Math.random() * (target[1] - target[0] + 1) + target[0]));
+                    } else {
+                        str += t;
                     }
                 }
             }
