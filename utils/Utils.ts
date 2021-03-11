@@ -11,7 +11,7 @@ import BaseResult from "../dto/BaseResult";
 export default class Utils {
 
     static checkNeed(real: object, need: object): BaseResult {
-        let rs = BaseResult.success("");
+        let rs = BaseResult.success();
         let needEntries = Object.entries(need);
         for (let n of needEntries) {
             if (typeof real[n[0]] === "undefined") {
