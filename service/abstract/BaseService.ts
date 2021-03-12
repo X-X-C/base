@@ -99,7 +99,7 @@ export default abstract class BaseService<E extends object> {
      * @param options
      * @param ignore
      */
-    async edit(filter: any, options: any): Promise<number> {
+    async edit(filter: E | other, options: any): Promise<number> {
         let line = 0;
         if (Utils.cleanObj(options, false)) {
             line = await this.dao.update(filter, options);
@@ -119,7 +119,7 @@ export default abstract class BaseService<E extends object> {
      * 删除
      * @param filter
      */
-    async delete(filter: any): Promise<number> {
+    async delete(filter: E | other): Promise<number> {
         return await this.dao.delete(filter);
     }
 
@@ -127,7 +127,7 @@ export default abstract class BaseService<E extends object> {
      * 统计查询
      * @param filter
      */
-    async count(filter: any): Promise<number> {
+    async count(filter: E | other): Promise<number> {
         return await this.dao.count(filter);
     }
 
@@ -142,7 +142,7 @@ export default abstract class BaseService<E extends object> {
      * @param options
      */
     async pageList(
-        filter: any = {},
+        filter: E | other = {},
         options: {
             page?: number,
             size?: number,
@@ -151,7 +151,7 @@ export default abstract class BaseService<E extends object> {
             [otherKey: string]: any
         }
     ) {
-        let rs: listResult<E> = {
+        let rs: listResult<E | other> = {
             data: []
         };
         let {page, size} = options;
@@ -169,7 +169,7 @@ export default abstract class BaseService<E extends object> {
      * @param filter
      * @param options
      */
-    async get(filter: any = {}, options: any = {}): Promise<E> {
+    async get(filter: E | other = {}, options: any = {}): Promise<E> {
         return await this.dao.get(filter, options);
     }
 
@@ -178,7 +178,7 @@ export default abstract class BaseService<E extends object> {
      * @param filter
      * @param options
      */
-    async getAll(filter: any = {}, options: {
+    async getAll(filter: E | other = {}, options: {
         sort?: any,
         skip?: number,
         limit?: number,
