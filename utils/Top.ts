@@ -55,13 +55,14 @@ export default class Top {
     /**
      * 发放权益
      * @param ename
+     * @param openId
      * @param ext
      * @return 参考：https://open.taobao.com/api.htm?docId=45573&docType=2&scopeId=16997
      */
-    async sendBenefit(ename, ext?) {
+    async sendBenefit(ename, openId = this.context.openId, ext?) {
         let params = {
             right_ename: ename,
-            receiver_id: this.context.openId,//用户openid
+            receiver_id: openId,//用户openid
             user_type: "taobao",//固定参数
             unique_id: Utils.uuid.v1(),
             app_name: "mtop"

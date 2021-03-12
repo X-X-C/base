@@ -29,14 +29,14 @@ export default class TopService {
     async vipStatus(
         {
             useCache = true,
-            ext = {}
+            mixNick = this.context.mixNick
         } = {}
     ): Promise<result> {
         if (this.cache.vipStatus && useCache) {
             return this.cache.vipStatus;
         }
         let r = this.getResult();
-        r.data = await this.top.vipStatus(ext);
+        r.data = await this.top.vipStatus({mix_nick: mixNick});
         r.data = r.data.result.member_info;
         r.code = Number(!!r.data);
         this.cache.vipStatus = r;
@@ -94,11 +94,12 @@ export default class TopService {
     /**
      * 发放奖品
      * @param ename
+     * @param openId
      * @param ext
      */
-    async sendBenefit(ename, ext?): Promise<result> {
+    async sendBenefit(ename, openId = this.context.openId, ext?): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.sendBenefit(ename, ext);
+        r.data = await this.top.sendBenefit(ename, openId, ext);
         r.code = Number(r.data.result_success === true);
         return r;
     }
