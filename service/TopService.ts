@@ -26,12 +26,17 @@ export default class TopService {
     /**
      * 查询当前用户VIP信息
      */
-    async vipStatus(): Promise<result> {
-        if (this.cache.vipStatus) {
+    async vipStatus(
+        {
+            useCache = true,
+            ext = {}
+        } = {}
+    ): Promise<result> {
+        if (this.cache.vipStatus && useCache) {
             return this.cache.vipStatus;
         }
         let r = this.getResult();
-        r.data = await this.top.vipStatus();
+        r.data = await this.top.vipStatus(ext);
         r.data = r.data.result.member_info;
         r.code = Number(!!r.data);
         this.cache.vipStatus = r;
@@ -89,10 +94,11 @@ export default class TopService {
     /**
      * 发放奖品
      * @param ename
+     * @param ext
      */
-    async sendBenefit(ename): Promise<result> {
+    async sendBenefit(ename, ext?): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.sendBenefit(ename);
+        r.data = await this.top.sendBenefit(ename, ext);
         r.code = Number(r.data.result_success === true);
         return r;
     }
