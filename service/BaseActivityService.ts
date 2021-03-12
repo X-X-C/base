@@ -1,7 +1,7 @@
 import BaseService from "./abstract/BaseService";
 import App from "../App";
 
-export default class BaseActivityService extends BaseService<any> {
+export default class BaseActivityService extends BaseService<activity> {
     constructor(app: App) {
         super("activities", app);
     }
