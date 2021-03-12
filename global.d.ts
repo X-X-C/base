@@ -38,7 +38,7 @@ interface activityConfig {
 
 interface configPrize {
     id: string,
-    type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point' | "noprize"
+    type: 'coupon' | 'item' | 'code' | 'goods' | 'benefit' | 'point' | "noprize" | "multiple"
     stock: number
     condition: {
         num: number,

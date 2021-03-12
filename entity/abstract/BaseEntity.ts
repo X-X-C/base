@@ -7,14 +7,21 @@ export default class BaseEntity {
             arr: "allMatch" | "allReplace",
             num: "set" | "inc",
         }
-    } = {}
+    }
+
+    get _data_() {
+        if (!this._data) {
+            this._data = {};
+        }
+        return this._data;
+    }
 
     get compareParam() {
-        return this._data.compareParam;
+        return this._data_.compareParam;
     }
 
     set compareParam(v) {
-        this._data.compareParam = v;
+        this._data_.compareParam = v;
     }
 
     get optionsStart() {
