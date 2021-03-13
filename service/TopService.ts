@@ -150,7 +150,7 @@ export default class TopService extends BaseService<any> {
             extParams = <orderExt>{},
             ext = {},
             useCache = true
-        }
+        } = {}
     ) {
         if (useCache === true) {
             this.cacheRun;
@@ -183,7 +183,7 @@ export default class TopService extends BaseService<any> {
         {
             extParams = {},
             ext = {}
-        }
+        } = {}
     ): Promise<result> {
         let r = this.getResult();
         r.data = await this.invoke("alibaba.benefit.send", {
@@ -219,7 +219,7 @@ export default class TopService extends BaseService<any> {
         {
             extParams = {},
             ext = {}
-        }
+        } = {}
     ): Promise<result> {
         let r = this.getResult();
         r.data = await this.invoke(
