@@ -215,8 +215,8 @@ export default class Utils {
     }
 
     static uuid = {
-        v1: uuid.v1(),
-        v4: uuid.v4()
+        v1: uuid.v1,
+        v4: uuid.v4
     }
 
     static type = {
