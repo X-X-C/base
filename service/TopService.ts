@@ -38,6 +38,7 @@ export default class TopService extends BaseService<any> {
             this.useCache = false;
             return this.cache[api];
         }
+        this.useCache = false;
         this.cache[api] = await this.context.cloud.topApi.invoke({
             api,
             data,
