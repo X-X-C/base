@@ -9,7 +9,7 @@ export default class TopService extends BaseService<any> {
 
     cache: any = {}
 
-    private useCache: boolean = true;
+    protected useCache: boolean = true;
 
     get cacheRun() {
         this.useCache = true;
