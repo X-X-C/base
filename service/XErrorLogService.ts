@@ -3,7 +3,7 @@ import BaseService from "./abstract/BaseService";
 import App from "../App";
 import BaseResult from "../dto/BaseResult";
 
-export default class ErrorLogService extends BaseService<ErrorLog> {
+export default class XErrorLogService extends BaseService<ErrorLog> {
     constructor(app: App) {
         super(app, "errorLogs");
     }

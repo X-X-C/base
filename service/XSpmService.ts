@@ -2,7 +2,7 @@ import BaseService from "./abstract/BaseService";
 import Spm from "../entity/Spm";
 import App from "../App";
 
-export default class SpmService extends BaseService<Spm> {
+export default class XSpmService extends BaseService<Spm> {
     constructor(app: App) {
         super(app, "spm");
     }

@@ -1,16 +1,16 @@
 import Utils from "./utils/Utils";
 import BaseResult from "./dto/BaseResult";
-import ErrorLogService from "./service/ErrorLogService";
+import XErrorLogService from "./service/XErrorLogService";
 import ServiceManager from "./service/abstract/ServiceManager";
-import SpmService from "./service/SpmService";
-import BaseActivityService from "./service/BaseActivityService";
+import XSpmService from "./service/XSpmService";
+import XActivityService from "./service/XActivityService";
 import Spm from "./entity/Spm";
 
 export default class App {
 
     constructor(public context: any, public apiName: string) {
         this.services = new ServiceManager(this);
-        this.spmService = this.services.getService(SpmService);
+        this.spmService = this.services.getService(XSpmService);
         this.status = 1;
     }
 
@@ -25,7 +25,7 @@ export default class App {
         //是否检查活动时间
         inspectionActivity: false
     }
-    spmService: SpmService;
+    spmService: XSpmService;
     // 全局返回值
     response: BaseResult;
     //埋点数组
@@ -81,7 +81,7 @@ export default class App {
             //运行结束添加本次埋点
             await this.spmService.insertMany(this.spmBeans);
         } catch (e) {
-            let errorLogService = this.services.getService(ErrorLogService)
+            let errorLogService = this.services.getService(XErrorLogService)
             await errorLogService.add(e);
             if (e instanceof BaseResult) {
                 this.response = e;
@@ -100,7 +100,7 @@ export default class App {
     async before() {
         let setGlobalActivity = async () => {
             if (!this.globalActivity) {
-                let activityService = this.getService(BaseActivityService);
+                let activityService = this.getService(XActivityService);
                 this.globalActivity = await activityService.getActivity();
             }
         }
