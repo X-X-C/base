@@ -212,8 +212,8 @@ export default class TopService extends BaseService<any> {
      **/
     async opentradeSpecialUsersMark(
         {
-            sku_id,
-            item_id,
+            skuId,
+            itemId,
             openId = this.openId
         },
         {
@@ -226,8 +226,8 @@ export default class TopService extends BaseService<any> {
             "taobao.opentrade.special.users.mark",
             {
                 status: "MARK",
-                sku_id: String(sku_id),
-                item_id: String(item_id),
+                sku_id: String(skuId),
+                item_id: String(itemId),
                 open_user_ids: openId,
                 hit: "true",
                 ...extParams
@@ -312,7 +312,7 @@ export default class TopService extends BaseService<any> {
      */
     async taobaoItemSellerGet(
         {
-            num_iid
+            numIid
         },
         {
             extParams = {},
@@ -324,7 +324,7 @@ export default class TopService extends BaseService<any> {
             "taobao.item.seller.get",
             {
                 fields: "num_iid,title,nick,price,approve_status,sku",
-                num_iid,
+                num_iid: numIid,
                 ...extParams
             },
             {
@@ -344,7 +344,7 @@ export default class TopService extends BaseService<any> {
      */
     async taobaoItemsSellerListGet(
         {
-            num_iids
+            numIids
         },
         {
             extParams = {},
@@ -356,7 +356,7 @@ export default class TopService extends BaseService<any> {
             "taobao.items.seller.list.get",
             {
                 fields: "num_iid,title,nick,price,approve_status,sku",
-                num_iids,
+                num_iids: numIids,
                 ...extParams
             },
             {
@@ -413,7 +413,7 @@ export default class TopService extends BaseService<any> {
      */
     async taobaoCrmPointAvailableGet(
         {
-            mix_nick = this.mixNick,
+            mixNick = this.mixNick,
         },
         {
             extParams = {},
@@ -424,7 +424,7 @@ export default class TopService extends BaseService<any> {
         r.data = await this.invoke(
             "taobao.crm.point.available.get",
             {
-                mix_nick: mix_nick,
+                mix_nick: mixNick,
                 ...extParams
             },
             {
