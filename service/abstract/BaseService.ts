@@ -6,11 +6,13 @@ import BaseResult from "../../dto/BaseResult";
 import BaseDao from "../../dao/BaseDao";
 
 export default abstract class BaseService<E extends object> {
-    protected constructor(tb: string, app: App) {
+    protected constructor(app: App, tb?: string) {
         this.dao = new BaseDao(app.context);
-        this.dao.initTb(tb);
         this.app = app;
         this.editStrict = true;
+        if (tb) {
+            this.dao.initTb(tb);
+        }
     }
 
     protected app: App;

@@ -5,7 +5,7 @@ import BaseResult from "../dto/BaseResult";
 
 export default class ErrorLogService extends BaseService<ErrorLog> {
     constructor(app: App) {
-        super("errorLogs", app);
+        super(app, "errorLogs");
     }
 
     async add(e: BaseResult | any) {

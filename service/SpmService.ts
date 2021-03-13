@@ -4,7 +4,7 @@ import App from "../App";
 
 export default class SpmService extends BaseService<Spm> {
     constructor(app: App) {
-        super("spm", app);
+        super(app, "spm");
     }
 
     /**

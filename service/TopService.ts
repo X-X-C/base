@@ -1,19 +1,19 @@
-import Top from "../utils/Top";
 import Utils from "../utils/Utils";
 import App from "../App";
+import BaseService from "./abstract/BaseService";
 
-export default class TopService {
+export default class TopService extends BaseService<any> {
     constructor(app: App) {
-        this.context = app.context;
-        this.top = new Top(this.context);
+        super(app);
     }
 
-    context;
-    //TOP接口工具
-    top: Top;
+    cache: any = {}
 
-    cache = {
-        vipStatus: null
+    private useCache: boolean = true;
+
+    get cacheRun() {
+        this.useCache = true;
+        return this;
     }
 
     getResult(): result {
@@ -24,22 +24,59 @@ export default class TopService {
     }
 
     /**
+     * 调用top接口
+     * @param api
+     * @param data  参数
+     * @param useCache  是否使用缓存
+     * @param ext   额外参数
+     */
+    async invoke(api: string, data, {
+        ext = {}
+    } = {}) {
+        //使用缓存
+        if (this.cache[api] && this.useCache === true) {
+            return this.cache[api];
+        }
+        this.useCache = false;
+        this.cache[api] = await this.context.cloud.topApi.invoke({
+            api,
+            data,
+            autoSession: true,
+            ...ext
+        });
+        return this.cache[api]
+    }
+
+    /**
      * 查询当前用户VIP信息
+     * @doc 参考：https://open.taobao.com/api.htm?docId=34436&docType=2&scopeId=13840
      */
     async vipStatus(
         {
-            useCache = true,
-            mixNick = this.context.mixNick
+            mixNick = this.mixNick,
+        } = {},
+        {
+            ext = {},
+            extParams = {}
         } = {}
     ): Promise<result> {
-        if (this.cache.vipStatus && useCache) {
-            return this.cache.vipStatus;
-        }
         let r = this.getResult();
-        r.data = await this.top.vipStatus({mix_nick: mixNick});
+        if (mixNick === this.nick) {
+            this.cacheRun;
+        }
+        r.data = await this.invoke(
+            "taobao.crm.member.identity.get",
+            {
+                extra_info: '{"source":"paiyangji","deviceId":"testId","itemId":565058963761}', //固定写法
+                mix_nick: mixNick,
+                ...extParams
+            },
+            {
+                ext
+            }
+        );
         r.data = r.data.result.member_info;
         r.code = Number(!!r.data);
-        this.cache.vipStatus = r;
         return r;
     }
 
@@ -50,15 +87,36 @@ export default class TopService {
      * @param ext
      * @param page
      */
-    async selectAllOrder(start: any = false, end: any = false, ext: orderExt = {}, page = 1) {
-        let result = await this.selectOrder(start, end, {
-            use_has_next: true,
-            page_no: page,
-            ...ext
-        });
+    async selectAllOrder(
+        {
+            startTime,
+            endTime,
+            page = 1,
+            openId = this.openId
+        },
+        {
+            extParams = <orderExt>{},
+            ext = {}
+        } = {}
+    ) {
+        let params1 = {
+            startTime,
+            endTime,
+            page,
+            openId,
+        }
+        let params2 = {
+            extParams: {
+                use_has_next: true,
+                ...extParams
+            },
+            ext
+        }
+        let result = await this.selectOrder(params1, params2);
         //如果有下一页
         if (result.has_next === true) {
-            let rs: any = await this.selectAllOrder(start, end, ext, page + 1);
+            params1.page += 1;
+            let rs: any = await this.selectAllOrder(params1, params2);
             result.trades.trade = result.trades.trade.concat(rs.trades.trade);
             return result;
         } else {
@@ -75,31 +133,69 @@ export default class TopService {
      *     buyer_open_id:   --匹配openId用户的订单
      *     page_no:     --页码
      * }
+     * @param page
+     * @param openId
+     * @param extParams
+     * @param useCache
+     * @doc 参考：https://open.taobao.com/api.htm?docId=45011&docType=2&scopeId=16730
      */
-    async selectOrder(startTime: any = false, endTime: any = false, ext: orderExt = {}) {
-        let params: any = {
-            page_no: 1,
-            ...ext
-        };
-        if (startTime) {
-            params.start_created = startTime;
+    async selectOrder(
+        {
+            startTime = "1970-01-01 00:00:00",
+            endTime = "1970-01-01 00:00:00",
+            page = 1,
+            openId = this.openId
+        },
+        {
+            extParams = <orderExt>{},
+            ext = {},
+            useCache = true
         }
-        if (endTime) {
-            params.end_created = endTime;
+    ) {
+        if (useCache === true) {
+            this.cacheRun;
         }
-        Utils.cleanObj(params);
-        return await this.top.selectOrder(params);
+        return await this.invoke("taobao.open.trades.sold.get", {
+            fields: "tid,type,status,payment,orders,rx_audit_status",
+            page_size: 100,
+            buyer_open_id: openId,
+            start_created: startTime,
+            end_created: endTime,
+            page_no: page,
+            ...extParams
+        }, {
+            ext
+        });
     }
 
     /**
      * 发放奖品
      * @param ename
      * @param openId
+     * @param extParams
      * @param ext
      */
-    async sendBenefit(ename, openId = this.context.openId, ext?): Promise<result> {
+    async sendBenefit(
+        {
+            ename,
+            receiverOpenId = this.openId,
+        },
+        {
+            extParams = {},
+            ext = {}
+        }
+    ): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.sendBenefit(ename, openId, ext);
+        r.data = await this.invoke("alibaba.benefit.send", {
+            right_ename: ename,
+            receiver_id: receiverOpenId,//用户openid
+            user_type: "taobao",//固定参数
+            unique_id: Utils.uuid.v1(),
+            app_name: "mtop",
+            ...extParams
+        }, {
+            ext
+        });
         r.code = Number(r.data.result_success === true);
         return r;
     }
@@ -109,11 +205,37 @@ export default class TopService {
      * 为当前用户标记指定商品
      * @param sku_id
      * @param item_id
+     * @param openId
+     * @param extParams
      * @param ext
-     */
-    async opentradeSpecialUsersMark(sku_id, item_id, ext: any = {}): Promise<result> {
+     * @doc 参考：https://open.taobao.com/api.htm?spm=a219a.7386797.0.0.6344669azYA9UM&source=search&docId=51296&docType=2
+     **/
+    async opentradeSpecialUsersMark(
+        {
+            sku_id,
+            item_id,
+            openId = this.openId
+        },
+        {
+            extParams = {},
+            ext = {}
+        }
+    ): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.opentradeSpecialUsersMark(sku_id, item_id, ext)
+        r.data = await this.invoke(
+            "taobao.opentrade.special.users.mark",
+            {
+                status: "MARK",
+                sku_id: String(sku_id),
+                item_id: String(item_id),
+                open_user_ids: openId,
+                hit: "true",
+                ...extParams
+            },
+            {
+                ext
+            }
+        );
         r.code = Number(r.data.result && (r.data.code !== 50));
         return r;
     }
@@ -123,10 +245,30 @@ export default class TopService {
      * @param miniapp_id
      * @param item_ids
      * @param ext
+     * @doc 参考：https://open.taobao.com/api.htm?spm=a219a.7386797.0.0.7f2c669ahs9Hif&source=search&docId=51714&docType=2
      */
-    async taobaoOpentradeSpecialItemsBind(miniapp_id, item_ids, ext: any = {}): Promise<result> {
+    async taobaoOpentradeSpecialItemsBind(
+        {
+            appCID,
+            itemId
+        },
+        {
+            extParams = {},
+            ext = {}
+        } = {}
+    ): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.taobaoOpentradeSpecialItemsBind(miniapp_id, item_ids, ext)
+        r.data = await this.invoke(
+            "taobao.opentrade.special.items.bind",
+            {
+                miniapp_id: appCID,
+                item_ids: itemId,
+                ...extParams
+            },
+            {
+                ext
+            }
+        );
         r.code = Number(!!r.data.results?.item_bind_result?.[0]?.bind_ok);
         return r;
     }
@@ -134,11 +276,29 @@ export default class TopService {
     /**
      * 查询已经绑定的打标商品
      * @param miniapp_id
+     * @param extParams
      * @param ext
+     * @doc 参考：https://open.taobao.com/api.htm?docId=51716&docType=2&source=search
      */
-    async taobaoOpentradeSpecialItemsQuery(miniapp_id, ext: any = {}): Promise<result> {
+    async taobaoOpentradeSpecialItemsQuery(
+        {
+            appCID
+        }, {
+            extParams = {},
+            ext = {}
+        } = {}
+    ): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.taobaoOpentradeSpecialItemsQuery(miniapp_id, ext)
+        r.data = await this.invoke(
+            "taobao.opentrade.special.items.query",
+            {
+                miniapp_id: appCID,
+                ...extParams
+            },
+            {
+                ext
+            }
+        );
         r.code = Number(!!r.data.items?.number);
         return r;
     }
@@ -146,11 +306,31 @@ export default class TopService {
     /**
      * 获取商品信息
      * @param num_iid
+     * @param extParams
      * @param ext
+     * @doc 参考：https://open.taobao.com/api.htm?spm=a219a.7386797.0.0.1b14669agpX3MB&source=search&docId=24625&docType=2
      */
-    async taobaoItemSellerGet(num_iid, ext: any = {}): Promise<result> {
+    async taobaoItemSellerGet(
+        {
+            num_iid
+        },
+        {
+            extParams = {},
+            ext = {}
+        } = {}
+    ): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.taobaoItemSellerGet(num_iid, ext);
+        r.data = await this.invoke(
+            "taobao.item.seller.get",
+            {
+                fields: "num_iid,title,nick,price,approve_status,sku",
+                num_iid,
+                ...extParams
+            },
+            {
+                ext
+            }
+        );
         r.code = Number(!!r.data.item);
         return r;
     }
@@ -158,34 +338,99 @@ export default class TopService {
     /**
      * 获取多个商品信息
      * @param num_iid
+     * @param extParams
      * @param ext
+     * @doc 参考：https://open.taobao.com/api.htm?docId=24626&docType=2&source=search
      */
-    async taobaoItemsSellerListGet(num_iids, ext: any = {}): Promise<result> {
+    async taobaoItemsSellerListGet(
+        {
+            num_iids
+        },
+        {
+            extParams = {},
+            ext = {}
+        } = {}
+    ): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.taobaoItemsSellerListGet(num_iids, ext);
+        r.data = await this.invoke(
+            "taobao.items.seller.list.get",
+            {
+                fields: "num_iid,title,nick,price,approve_status,sku",
+                num_iids,
+                ...extParams
+            },
+            {
+                ext
+            }
+        );
         r.code = Number(!!r.data.items.item);
         return r;
     }
 
     /**
-     * 获取商品信息
+     * 会员积分变更
      * @param num   增加数量
      * @param openId    默认为当前用户增加
+     * @param extParams
      * @param ext
+     * @doc 参考：https://open.taobao.com/api.htm?docId=45305&docType=2&scopeId=16898
      */
-    async taobaoCrmPointChange(num, openId = this.context.openId, ext: any = {}): Promise<result> {
+    async taobaoCrmPointChange(
+        {
+            num,
+            openId = this.openId
+        },
+        {
+            extParams = {},
+            ext = {}
+        } = {}
+    ): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.taobaoCrmPointChange({
-            quantity: num,
-            open_id: openId
-        }, ext);
+        r.data = await this.invoke(
+            "taobao.crm.point.change",
+            {
+                change_type: 3,
+                opt_type: 0,
+                quantity: num,
+                open_id: openId,
+                ...extParams
+            },
+            {
+                ext
+            }
+        );
         r.code = Number(!!r.data.result);
         return r;
     }
 
-    async taobaoCrmPointAvailableGet(mix_nick = this.context.mixNick, ext: any = {}): Promise<result> {
+    /**
+     * 会员积分查询
+     * @param mix_nick
+     * @param openId
+     * @param extParams
+     * @param ext
+     * @doc 参考：https://open.taobao.com/api.htm?docId=42617&docType=2&scopeId=15929
+     */
+    async taobaoCrmPointAvailableGet(
+        {
+            mix_nick = this.mixNick,
+        },
+        {
+            extParams = {},
+            ext = {}
+        } = {}
+    ): Promise<result> {
         let r = this.getResult();
-        r.data = await this.top.taobaoCrmPointAvailableGet(mix_nick, ext);
+        r.data = await this.invoke(
+            "taobao.crm.point.available.get",
+            {
+                mix_nick: mix_nick,
+                ...extParams
+            },
+            {
+                ext
+            }
+        );
         r.code = Number(!!r.data.result);
         return r;
     }

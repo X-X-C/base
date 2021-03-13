@@ -3,7 +3,7 @@ import App from "../App";
 
 export default class BaseActivityService extends BaseService<activity> {
     constructor(app: App) {
-        super("activities", app);
+        super(app, "activities");
     }
 
     activity: activityData;
