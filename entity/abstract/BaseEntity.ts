@@ -1,6 +1,7 @@
 import Utils from "../../utils/Utils";
 
 export default class BaseEntity {
+    _id: string;
     _: this;
     _data: {
         compareParam?: {
