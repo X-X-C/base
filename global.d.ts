@@ -44,7 +44,8 @@ interface configPrize {
         num: number,
         type: string
         [key: string]: any
-    }
+    },
+    name: string
 
     [key: string]: any
 }
