@@ -111,7 +111,7 @@ export default abstract class BaseService<E extends object> {
             r.set501();
             r.data = JSON.parse(JSON.stringify({
                 filter, options
-            }).replace(/\$/g, ""))
+            }).replace(/[$.]/g, ">>"))
             throw r;
         }
         return line;
