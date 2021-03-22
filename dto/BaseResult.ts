@@ -51,7 +51,7 @@ export default class BaseResult {
     }
 
     public set501() {
-        this.message = '服务异常';
+        this.message = '网络繁忙';
         this.code = BaseResult.NOT_AS_EXPECT;
     }
 

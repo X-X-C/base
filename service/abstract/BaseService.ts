@@ -114,6 +114,7 @@ export default abstract class BaseService<E extends object> {
             }).replace(/[$.]/g, ">>"))
             throw r;
         }
+        this.editStrict = true;
         return line;
     }
 
