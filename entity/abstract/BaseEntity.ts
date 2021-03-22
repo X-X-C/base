@@ -1,13 +1,20 @@
 import Utils from "../../utils/Utils";
 
 export default class BaseEntity {
+    constructor(clazz?) {
+        if(clazz){
+            this._data_.clazz = clazz;
+        }
+    }
+
     _id: string;
     _: this;
     _data: {
         compareParam?: {
             arr: "allMatch" | "allReplace",
             num: "set" | "inc",
-        }
+        },
+        clazz?
     }
 
     get _data_() {
@@ -32,6 +39,9 @@ export default class BaseEntity {
             num: "inc"
         }
         this._ = Utils.deepClone(this);
+        if(this._data_.clazz){
+            this._ = new this._data_.clazz().init(this._);
+        }
         return;
     }
 
@@ -66,9 +76,23 @@ export default class BaseEntity {
         });
     }
 
+    get optionsBack() {
+        let {deepClone, compareObj} = Utils;
+        let cur = deepClone(this);
+        delete cur._;
+        delete cur._data;
+        let _ = deepClone(this._);
+        delete _._data;
+        delete _._;
+        return compareObj(cur, _, {
+            arrayHandle: this.compareParam.arr,
+            numberHandle: this.compareParam.num
+        });
+    }
+
     get delete_() {
         delete this._;
-        delete this._data.compareParam;
+        delete this._data?.compareParam;
         return;
     }
 
@@ -81,6 +105,7 @@ export default class BaseEntity {
 
     init(e) {
         Object.assign(this, e);
+        this.optionsStart;
         return this;
     }
 }
