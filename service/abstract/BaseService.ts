@@ -54,14 +54,9 @@ export default abstract class BaseService<E extends object> {
         return this.data.activityId;
     }
 
-    get setStrictEdit() {
-        this.editStrict = true;
-        return;
-    }
-
-    get setLooseEdit() {
+    get loosen() {
         this.editStrict = false;
-        return;
+        return this;
     }
 
     getService<C extends { [prop: string]: any }>(target: (new (...args) => C)): C {
