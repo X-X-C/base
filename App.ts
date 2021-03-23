@@ -17,7 +17,9 @@ export default class App {
     services: ServiceManager;
     config = {
         //全局请求参数
-        needParams: <checkType>{},
+        needParams: <checkType>{
+            activityId: "string"
+        },
         //每次请求所需参数
         runNeedParams: <checkType>{},
         //是否开启全局活动
