@@ -104,6 +104,10 @@ export default class App {
             if (!this.globalActivity) {
                 let activityService = this.getService(XActivityService);
                 this.globalActivity = await activityService.getActivity();
+                if (this.globalActivity.code === -1) {
+                    this.status = 0;
+                    this.response.set222("没有该活动");
+                }
             }
         }
         let inspectionActivity = async () => {
