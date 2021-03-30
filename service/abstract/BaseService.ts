@@ -18,8 +18,9 @@ export default abstract class BaseService<E extends object> {
     protected app: App;
     protected dao: BaseDao<E>;
     protected editStrict: boolean;
-    protected time = (date: any = new Date()): Time => {
-        return new Time(date);
+
+    protected time(date: any = new Date(), parse?): Time {
+        return new Time(date, parse);
     };
 
     get response(): BaseResult {
@@ -54,10 +55,15 @@ export default abstract class BaseService<E extends object> {
         return this.data.activityId;
     }
 
-    get loosen() {
+    get loosen(): this {
         this.editStrict = false;
         return this;
     }
+
+    get globalActivity() {
+        return this.app.globalActivity;
+    }
+
 
     getService<C extends { [prop: string]: any }>(target: (new (...args) => C)): C {
         if (this.app.services instanceof ServiceManager) {
@@ -65,10 +71,6 @@ export default abstract class BaseService<E extends object> {
         } else {
             return new target(this.app);
         }
-    }
-
-    get globalActivity() {
-        return this.app.globalActivity;
     }
 
     /**
@@ -189,6 +191,23 @@ export default abstract class BaseService<E extends object> {
         if (!Utils.isBlank(options.limit)) pipe.push({$limit: options.limit});
         if (!Utils.isBlank(options.project)) pipe.push({$project: options.project});
         return await this.aggregate(pipe);
+    }
+
+
+    stockInfo(prize: configPrize) {
+        let grant = this.globalActivity.data.data.grantTotal;
+        let rs = {
+            done: 0,
+            restStock: false
+        }
+        if (prize.dayStock === true) {
+            let time = this.time().common.YYYYMMDD;
+            rs.done = grant?.dayStock?.[prize.id]?.[time] || 0;
+        } else {
+            rs.done = grant?.[prize.id] || 0;
+        }
+        rs.restStock = rs.done < prize.stock
+        return rs;
     }
 
     /**

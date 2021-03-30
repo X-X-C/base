@@ -46,6 +46,7 @@ interface configPrize {
         [key: string]: any
     },
     name: string
+    dayStock: boolean
 
     [key: string]: any
 }

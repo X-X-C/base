@@ -3,8 +3,8 @@ import * as moment from "moment-timezone";
 //设置时区
 moment.tz.setDefault("Asia/Shanghai");
 export default class Time {
-    constructor(date: any = new Date()) {
-        this.bean = moment(...arguments);
+    constructor(date: any = new Date(), parse?) {
+        this.bean = moment(date, parse);
         this.common = {
             base: this.bean.format("YYYY-MM-DD HH:mm:ss"),
             YYYYMMDD: Number(this.bean.format("YYYYMMDD")),
