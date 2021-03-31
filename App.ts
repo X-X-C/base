@@ -10,7 +10,6 @@ export default class App {
 
     constructor(public context: any, public apiName: string) {
         this.services = new ServiceManager(this);
-        this.spmService = this.services.getService(XSpmService);
         this.status = 1;
     }
 
@@ -18,16 +17,11 @@ export default class App {
     config = {
         //全局请求参数
         needParams: <checkType>{
-            activityId: "string"
+            // activityId: "string"
         },
         //每次请求所需参数
         runNeedParams: <checkType>{},
-        //是否开启全局活动
-        globalActivity: false,
-        //是否检查活动时间
-        inspectionActivity: false
     }
-    spmService: XSpmService;
     // 全局返回值
     response: BaseResult;
     //埋点数组
@@ -45,20 +39,55 @@ export default class App {
         this.config.runNeedParams = v;
     }
 
-    get setGlobalActivity() {
-        this.config.globalActivity = true;
-        return;
+    get spmService(): XSpmService {
+        return this.getService(XSpmService);
     }
 
-    get inspectionActivity() {
-        this.config.inspectionActivity = true;
-        return;
+    get runConfig() {
+        return new Proxy(this.beforeConfig, {
+            get(target, p): any {
+                if (target[p].switch !== true) {
+                    target[p].switch = true;
+                }
+            }
+        })
     }
 
-    /**
-     * 运行方法 可以捕获异常并处理
-     * @param doSomething
-     */
+    async before() {
+        let inspection = async (f: Function) => {
+            if (this.status === 1) {
+                await f();
+            }
+        }
+        let runs = Object.values(this.beforeConfig);
+        for (const run of runs) {
+            if (run.switch === true) {
+                await inspection(run.run);
+                run.switch = false;
+            }
+        }
+    }
+
+    async addSpm(type, data?, ext?) {
+        this.spmBeans.push(
+            await this.spmService.bean(type, data, ext)
+        );
+    }
+
+    async addSimpleSpm(type, data?, ext?) {
+        this.spmBeans.push(
+            await this.spmService.simpleBean(type, data, ext)
+        );
+    }
+
+    db(tb: string) {
+        return this.context.cloud.db.collection(tb);
+    }
+
+    getService<T>(clazz: new(...args: any) => T): T {
+        return this.services.getService(clazz);
+    }
+
     async run(doSomething: Function): Promise<BaseResult> {
         this.response = BaseResult.success();
         //保存原始请求参数
@@ -74,7 +103,7 @@ export default class App {
             if (result.success === false) return result;
             //重置运行参数
             this.runNeedParams = {};
-            //运行前系统检查
+
             await this.before();
             //系统状态正常
             if (this.status === 1) {
@@ -99,60 +128,31 @@ export default class App {
         return this.response;
     }
 
-    async before() {
-        let setGlobalActivity = async () => {
-            if (!this.globalActivity) {
-                let activityService = this.getService(XActivityService);
-                this.globalActivity = await activityService.getActivity();
-                if (this.globalActivity.code === -1) {
-                    this.status = 0;
-                    this.response.set222("没有该活动");
+    beforeConfig = {
+        setGlobalActivity: {
+            switch: false,
+            run: async () => {
+                if (!this.globalActivity) {
+                    let activityService = this.getService(XActivityService);
+                    this.globalActivity = await activityService.getActivity();
+                    if (this.globalActivity.code === -1) {
+                        this.status = 0;
+                        this.response.set222("没有该活动");
+                    }
+                    //防止不传活动ID，活动ID为空的情况
+                    this.context.data.activityId = this.globalActivity.data._id;
                 }
-                //防止不传活动ID，活动ID为空的情况
-                this.context.data.activityId = this.globalActivity.data._id;
+            }
+        },
+        inspectionActivity: {
+            switch: false,
+            run: async () => {
+                await this.beforeConfig.setGlobalActivity.run();
+                if (this.globalActivity.code !== 1) {
+                    this.response.set201();
+                    this.status = 0;
+                }
             }
         }
-        let inspectionActivity = async () => {
-            await setGlobalActivity();
-            if (this.globalActivity.code !== 1) {
-                this.response.set201();
-                this.status = 0;
-            }
-        }
-        let inspection = async (f: Function) => {
-            if (this.status === 1) {
-                await f();
-            }
-        }
-        if (this.config.globalActivity === true) {
-            await setGlobalActivity();
-        }
-        if (this.config.inspectionActivity === true) {
-            await inspection(inspectionActivity);
-        }
-    }
-
-    async addSpm(type, data?, ext?) {
-        this.spmBeans.push(
-            await this.spmService.bean(type, data, ext)
-        );
-    }
-
-    async addSimpleSpm(type, data?, ext?) {
-        this.spmBeans.push(
-            await this.spmService.simpleBean(type, data, ext)
-        );
-    }
-
-    /**
-     * 获取数据库连接
-     * @param tb 表名
-     */
-    db(tb: string) {
-        return this.context.cloud.db.collection(tb);
-    }
-
-    getService<T>(clazz: new(...args: any) => T): T {
-        return this.services.getService(clazz);
     }
 }

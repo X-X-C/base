@@ -5,24 +5,24 @@ moment.tz.setDefault("Asia/Shanghai");
 export default class Time {
     constructor(date: any = new Date(), parse?) {
         this.bean = moment(date, parse);
-        this.common = {
+    }
+
+    bean;
+
+    get common() {
+        return {
             base: this.bean.format("YYYY-MM-DD HH:mm:ss"),
             YYYYMMDD: Number(this.bean.format("YYYYMMDD")),
             x: Number(this.bean.format("x"))
         }
-        this.to = (number = 0, string = "d"): Time => {
-            this.bean.add(number, string);
-            return this;
-        }
-        this.format = (str) => this.bean.format(str);
     }
 
-    bean: any;
-    common: {
-        base: string,
-        YYYYMMDD: number,
-        x: number
+    to(number = 0, toType = "d") {
+        this.bean.add(number, toType);
+        return this;
     };
-    to: Function;
-    format: Function;
+
+    format(formatStr) {
+        return this.bean.format(formatStr);
+    };
 }
