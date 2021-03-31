@@ -108,6 +108,8 @@ export default class App {
                     this.status = 0;
                     this.response.set222("没有该活动");
                 }
+                //防止不传活动ID，活动ID为空的情况
+                this.context.data.activityId = this.globalActivity.data._id;
             }
         }
         let inspectionActivity = async () => {
