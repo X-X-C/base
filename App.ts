@@ -43,7 +43,7 @@ export default class App {
         return this.getService(XSpmService);
     }
 
-    get runConfig() {
+    get set() {
         return new Proxy(this.beforeConfig, {
             get(target, p): any {
                 if (target[p].switch !== true) {
@@ -129,7 +129,7 @@ export default class App {
     }
 
     beforeConfig = {
-        setGlobalActivity: {
+        globalActivity: {
             switch: false,
             run: async () => {
                 if (!this.globalActivity) {
@@ -147,7 +147,7 @@ export default class App {
         inspectionActivity: {
             switch: false,
             run: async () => {
-                await this.beforeConfig.setGlobalActivity.run();
+                await this.beforeConfig.globalActivity.run();
                 if (this.globalActivity.code !== 1) {
                     this.response.set201();
                     this.status = 0;
