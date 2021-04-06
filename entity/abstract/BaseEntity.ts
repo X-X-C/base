@@ -2,7 +2,7 @@ import Utils from "../../utils/Utils";
 
 export default class BaseEntity {
     constructor(clazz?) {
-        if(clazz){
+        if (clazz) {
             this._data_.clazz = clazz;
         }
     }
@@ -39,7 +39,7 @@ export default class BaseEntity {
             num: "inc"
         }
         this._ = Utils.deepClone(this);
-        if(this._data_.clazz){
+        if (this._data_.clazz) {
             this._ = new this._data_.clazz().init(this._);
         }
         return;
@@ -97,10 +97,14 @@ export default class BaseEntity {
     }
 
     get pure() {
-        let user = Utils.deepClone(this);
-        delete user._;
-        delete user._data;
-        return user;
+        let e = Utils.deepClone(this);
+        delete e._;
+        delete e._data;
+        return e;
+    }
+
+    protected overPure() {
+        this.pure;
     }
 
     init(e) {
