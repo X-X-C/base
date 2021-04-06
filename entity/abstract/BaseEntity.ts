@@ -40,7 +40,7 @@ export default class BaseEntity {
         }
         this._ = Utils.deepClone(this);
         if (this._data_.clazz) {
-            this._ = new this._data_.clazz().init(this._);
+            this._ = new this._data_.clazz().init(this._, false);
         }
         return;
     }
@@ -97,19 +97,21 @@ export default class BaseEntity {
     }
 
     get pure() {
+        return this.getPure();
+    }
+
+    getPure() {
         let e = Utils.deepClone(this);
         delete e._;
         delete e._data;
         return e;
     }
 
-    protected overPure() {
-        return this.pure;
-    }
-
-    init(e) {
+    init(e, optionsStart: boolean = true) {
         Object.assign(this, e);
-        this.optionsStart;
+        if (optionsStart === true) {
+            this.optionsStart;
+        }
         return this;
     }
 }
