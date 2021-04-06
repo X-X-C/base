@@ -104,7 +104,7 @@ export default class BaseEntity {
     }
 
     protected overPure() {
-        this.pure;
+        return this.pure;
     }
 
     init(e) {
