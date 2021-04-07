@@ -170,7 +170,10 @@ export default abstract class BaseService<E extends object> {
      * @param options
      */
     async get(filter: E | other = {}, options: any = {}): Promise<E> {
-        return await this.dao.get(filter, options);
+        return (await this.getAll(filter, {
+            limit: 1,
+            ...options
+        }))[0];
     }
 
     /**

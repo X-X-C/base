@@ -25,15 +25,6 @@ export default class BaseDao<T> {
         return await this.db.insertMany(beans);
     }
 
-    async find(filter: any = {}, options: any = {}): Promise<T[]> {
-        return await this.db.find(filter, options);
-    }
-
-    async get(filter: any = {}, options: any = {}): Promise<T> {
-        options.limit = 1;
-        return (await this.find(filter, options))[0];
-    }
-
     async update(filter: any, options: any): Promise<number> {
         return await this.db.updateMany(filter, options);
     }
