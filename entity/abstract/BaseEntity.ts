@@ -7,6 +7,8 @@ export default class BaseEntity {
         }
     }
 
+    [key: string]: any;
+
     _id: string;
     _: this;
     _data: {
@@ -102,12 +104,15 @@ export default class BaseEntity {
 
     getPure() {
         let e = Utils.deepClone(this);
-        delete e._;
-        delete e._data;
+        for (const k in e) {
+            if (k[0] === "_" && k !== "_id") {
+                delete e[k];
+            }
+        }
         return e;
     }
 
-    init(e, optionsStart: boolean = true) {
+    init(e: this | other, optionsStart: boolean = true) {
         Object.assign(this, e);
         if (optionsStart === true) {
             this.optionsStart;
