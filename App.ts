@@ -125,6 +125,7 @@ export default class App {
         }
         //清空埋点
         this.spmBeans = [];
+        this.status = 1;
         return this.response;
     }
 
