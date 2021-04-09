@@ -138,6 +138,7 @@ export default class App {
                     if (this.globalActivity.code === -1) {
                         this.status = 0;
                         this.response.set222("没有该活动");
+                        return;
                     }
                     //防止不传活动ID，活动ID为空的情况
                     this.context.data.activityId = this.globalActivity.data._id;
