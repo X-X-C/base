@@ -309,6 +309,13 @@ export default class Utils {
         return JSON.stringify(any).replace(/"/g, "");
     }
 
+    static insertClean(obj) {
+        return JSON.parse(
+            JSON.stringify(obj).replace(/[$]/g, ">>>")
+                .replace(/[.]/g, ">>")
+        )
+    }
+
     /**
      * 比较两个对象，返回两个比较后的直接条件
      * !!!!!!慎用!!!!!!

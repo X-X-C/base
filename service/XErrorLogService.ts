@@ -2,6 +2,7 @@ import ErrorLog from "../entity/ErrorLog";
 import BaseService from "./abstract/BaseService";
 import App from "../App";
 import BaseResult from "../dto/BaseResult";
+import Utils from "../utils/Utils";
 
 export default class XErrorLogService extends BaseService<ErrorLog> {
     constructor(app: App) {
@@ -16,7 +17,7 @@ export default class XErrorLogService extends BaseService<ErrorLog> {
         errorLog.openId = this.openId;
         errorLog.time = this.time().common.base;
         errorLog.params = this.response.params;
-        errorLog.desc = e;
+        errorLog.desc = Utils.insertClean(e);
         switch (e.code) {
             case 501:
                 errorLog.level = "logic";

@@ -106,9 +106,9 @@ export default abstract class BaseService<E extends object> {
         if (line === 0 && this.editStrict === true) {
             let r = BaseResult.fail();
             r.set501();
-            r.data = JSON.parse(JSON.stringify({
+            r.data = {
                 filter, options
-            }).replace(/[$.]/g, ">>"))
+            };
             throw r;
         }
         this.editStrict = true;
