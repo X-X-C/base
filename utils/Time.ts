@@ -8,6 +8,7 @@ export default class Time {
     }
 
     bean;
+    moment = moment;
 
     get common() {
         return {
