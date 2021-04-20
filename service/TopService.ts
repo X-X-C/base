@@ -391,7 +391,7 @@ export default class TopService extends BaseService<any> {
             "taobao.crm.point.change",
             {
                 change_type: 3,
-                opt_type: 0,
+                opt_type: "0",
                 quantity: num,
                 open_id: openId,
                 ...extParams
