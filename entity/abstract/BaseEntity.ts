@@ -7,8 +7,6 @@ export default class BaseEntity {
         }
     }
 
-    [key: string]: any;
-
     _id: string;
     _: this;
     _data: {
