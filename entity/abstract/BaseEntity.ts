@@ -119,4 +119,20 @@ export default class BaseEntity {
         }
         return this;
     }
+
+    getValueFromKey(k: string) {
+        let s = k.split(".");
+        let v = undefined;
+        while (s.length > 0) {
+            if (v === undefined) {
+                v = this[s.shift()];
+            } else {
+                v = v[s.shift()];
+            }
+            if (v === undefined) {
+                return v;
+            }
+        }
+        return v;
+    }
 }
