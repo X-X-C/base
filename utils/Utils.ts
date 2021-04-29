@@ -7,6 +7,7 @@ import * as uuid from "uuid";
 // @ts-ignore
 import * as qr from "qr-image";
 import BaseResult from "../dto/BaseResult";
+import Time from "./Time";
 
 export default class Utils {
 
@@ -321,7 +322,6 @@ export default class Utils {
 
     /**
      * 比较两个对象，返回两个比较后的直接条件
-     * !!!!!!慎用!!!!!!
      */
     static compareObj(
         origin,
@@ -444,5 +444,44 @@ export default class Utils {
         let finalStr = str.split("");
         finalStr.splice(hideStart, hideEnd - hideStart, ...new Array(hideLength || 1).fill(delimiter));
         return finalStr.join("");
+    }
+
+    static getMaxDays(days: string[], format: string = "YYYY-MM-DD") {
+        days = Utils.deepClone(days);
+        days.sort((a, b) => {
+            return -Number(a < b);
+        });
+        let max = [];
+        let cur = [];
+        while (days.length > 0) {
+            let day = days.shift();
+            if (cur.length === 0) {
+                cur.push(day);
+            } else {
+                let last = new Time(cur[cur.length - 1], format);
+                if (last.to(1).format(format) === day) {
+                    cur.push(day);
+                } else {
+                    cur = [day];
+                }
+                if (cur.length > max.length) {
+                    max = cur;
+                }
+            }
+        }
+        return max;
+    }
+
+    static getTodayBackMaxDays(days, format = "YYYY-MM-DD") {
+        let time = new Time().to(1);
+        let max = [];
+        while (true) {
+            if (days.indexOf(time.to(-1).format(format)) !== -1) {
+                max.push(time.format(format))
+            } else {
+                break;
+            }
+        }
+        return max;
     }
 }
