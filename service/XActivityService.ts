@@ -18,11 +18,11 @@ export default class XActivityService extends BaseService<activity> {
                 startTime: 1,
                 endTime: 1,
                 config: 1,
-                data: 1,
-                isDel: 1
+                data: 1
             },
             filter = <activity | other>{
-                _id: this.activityId
+                _id: this.activityId,
+                isDel: 0
             }
         } = {}
     ): Promise<activityData> {
