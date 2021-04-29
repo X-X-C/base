@@ -302,7 +302,10 @@ export default class Utils {
     }
 
     static deepClone<T>(obj: T): T {
-        return JSON.parse(JSON.stringify(obj));
+        if (obj) {
+            return JSON.parse(JSON.stringify(obj));
+        }
+        return obj;
     }
 
     static toJson(any): string {

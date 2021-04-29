@@ -21,6 +21,7 @@ export default class BaseResult {
     public static readonly STATUS_SUCCESS = 200; //成功码
     public static readonly NOT_IN_ACTIVE_TIME = 201; //不在活动时间内
     public static readonly LOGIC_FAIL = 222; //逻辑失败
+    private static readonly NO_AUTH = 502; //用户没有授权
 
 
     //基础成功返回对象
@@ -37,7 +38,7 @@ export default class BaseResult {
     //基础失败返回对象
     public static fail(
         {
-            message = "错误",
+            message = "网络繁忙",
             data = {},
             code = this.STATUS_FAIL
         } = {}
@@ -53,6 +54,11 @@ export default class BaseResult {
     public set501() {
         this.message = '网络繁忙';
         this.code = BaseResult.NOT_AS_EXPECT;
+    }
+
+    public set502() {
+        this.message = '用户没有授权';
+        this.code = BaseResult.NO_AUTH;
     }
 
     public set222(message?: string) {

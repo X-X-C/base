@@ -10,10 +10,12 @@ export default class App {
 
     constructor(public context: any, public apiName: string) {
         this.services = new ServiceManager(this);
+        this.before = new XBefore(this);
         this.status = 1;
     }
 
     services: ServiceManager;
+    before: XBefore;
     config = {
         //全局请求参数
         needParams: <checkType>{
@@ -41,31 +43,6 @@ export default class App {
 
     get spmService(): XSpmService {
         return this.getService(XSpmService);
-    }
-
-    get set() {
-        return new Proxy(this.beforeConfig, {
-            get(target, p): any {
-                if (target[p].switch !== true) {
-                    target[p].switch = true;
-                }
-            }
-        })
-    }
-
-    async before() {
-        let inspection = async (f: Function) => {
-            if (this.status === 1) {
-                await f();
-            }
-        }
-        let runs = Object.values(this.beforeConfig);
-        for (const run of runs) {
-            if (run.switch === true) {
-                await inspection(run.run);
-                run.switch = false;
-            }
-        }
     }
 
     async addSpm(type, data?, ext?) {
@@ -103,14 +80,13 @@ export default class App {
             if (result.success === false) return result;
             //重置运行参数
             this.runNeedParams = {};
-
-            await this.before();
+            await this.before.run();
             //系统状态正常
             if (this.status === 1) {
                 await doSomething.call(this.context.data);
+                //运行结束添加本次埋点
+                await this.spmService.insertMany(this.spmBeans);
             }
-            //运行结束添加本次埋点
-            await this.spmService.insertMany(this.spmBeans);
         } catch (e) {
             let errorLogService = this.services.getService(XErrorLogService)
             await errorLogService.add(e);
@@ -128,33 +104,64 @@ export default class App {
         this.status = 1;
         return this.response;
     }
+}
 
-    beforeConfig = {
-        globalActivity: {
-            switch: false,
-            run: async () => {
-                if (!this.globalActivity) {
-                    let activityService = this.getService(XActivityService);
-                    this.globalActivity = await activityService.getActivity();
-                    if (this.globalActivity.code === -1) {
-                        this.status = 0;
-                        this.response.set222("没有该活动");
-                        return;
-                    }
-                    //防止不传活动ID，活动ID为空的情况
-                    this.context.data.activityId = this.globalActivity.data._id;
-                }
+
+export class XBefore {
+
+    constructor(public app: App) {
+    }
+
+    before: Function[] = [];
+
+    set addBefore(v) {
+        if (!this.before.find(v1 => v1.toString() === v.toString())) {
+            this.before.push(v);
+        }
+    }
+
+    async run() {
+        for (let f of this.before) {
+            if (this.app.status === 1) {
+                await f(this.app);
             }
-        },
-        inspectionActivity: {
-            switch: false,
-            run: async () => {
-                await this.beforeConfig.globalActivity.run();
-                if (this.globalActivity.code !== 1) {
-                    this.response.set201();
-                    this.status = 0;
+        }
+        this.before = [];
+    }
+
+    globalActivity() {
+        this.addBefore = async (app: App) => {
+            if (!app.globalActivity) {
+                let activityService = app.getService(XActivityService);
+                app.globalActivity = await activityService.getActivity();
+                if (app.globalActivity.code === -1) {
+                    app.status = 0;
+                    app.response.set222("没有该活动");
+                    return;
                 }
+                //防止不传活动ID，活动ID为空的情况
+                app.context.data.activityId = app.globalActivity.data._id;
+            }
+        }
+    }
+
+    inspectionActivity() {
+        this.globalActivity();
+        this.addBefore = async (app: App) => {
+            if (app.globalActivity.code !== 1) {
+                app.response.set201();
+                app.status = 0;
+            }
+        }
+    }
+
+    auth() {
+        this.addBefore = (app: App) => {
+            if (!app.context.userNick) {
+                app.response.set222("用户没有授权");
+                app.status = 0;
             }
         }
     }
 }
+
