@@ -5,8 +5,8 @@ import App from "../../App";
 import BaseResult from "../../dto/BaseResult";
 import BaseDao from "../../dao/BaseDao";
 
-export default abstract class BaseService<E extends object> {
-    protected constructor(app: App, tb?: string) {
+export default class BaseService<E extends object> {
+    constructor(app: App, tb?: string) {
         this.dao = new BaseDao(app.context);
         this.app = app;
         this.editStrict = true;
