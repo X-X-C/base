@@ -16,8 +16,7 @@ export default class Utils {
         let needEntries = Object.entries(need);
         for (let n of needEntries) {
             if (typeof real[n[0]] === "undefined") {
-                rs.success = false;
-                rs.message = "缺少参数" + n[0];
+                rs.set224("缺少参数" + n[0]);
                 break;
             }
             if (n[1] !== "any") {
@@ -27,7 +26,7 @@ export default class Utils {
                     rs.success = Array.isArray(real[n[0]]);
                 }
                 if (rs.success === false) {
-                    rs.message = `${n[0]}类型应为${n[1]}`
+                    rs.set224(`${n[0]}类型应为${n[1]}`);
                     break;
                 }
             }

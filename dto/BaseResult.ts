@@ -21,7 +21,8 @@ export default class BaseResult {
     public static readonly STATUS_SUCCESS = 200; //成功码
     public static readonly NOT_IN_ACTIVE_TIME = 201; //不在活动时间内
     public static readonly LOGIC_FAIL = 222; //逻辑失败
-    private static readonly NO_AUTH = 502; //用户没有授权
+    private static readonly NO_AUTH = 223; //用户没有授权
+    private static readonly PARAMS_ERROR = 224; //用户没有授权
 
 
     //基础成功返回对象
@@ -56,9 +57,14 @@ export default class BaseResult {
         this.code = BaseResult.NOT_AS_EXPECT;
     }
 
-    public set502() {
+    public set223() {
         this.message = '用户没有授权';
         this.code = BaseResult.NO_AUTH;
+    }
+
+    public set224(message = "缺少必要参数") {
+        this.message = message;
+        this.code = BaseResult.PARAMS_ERROR;
     }
 
     public set222(message?: string) {

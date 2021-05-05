@@ -158,7 +158,7 @@ export class XBefore {
     auth() {
         this.addBefore = (app: App) => {
             if (!app.context.userNick) {
-                app.response.set222("用户没有授权");
+                app.response.set223();
                 app.status = 0;
             }
         }
