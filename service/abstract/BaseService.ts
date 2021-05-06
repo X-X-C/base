@@ -5,7 +5,7 @@ import App from "../../App";
 import BaseResult from "../../dto/BaseResult";
 import BaseDao from "../../dao/BaseDao";
 
-export default class BaseService<E extends object> {
+export default class BaseService<E extends other> {
     constructor(app: App, tb?: string) {
         this.dao = new BaseDao(app.context);
         this.app = app;
@@ -15,11 +15,11 @@ export default class BaseService<E extends object> {
         }
     }
 
-    protected app: App;
-    protected dao: BaseDao<E>;
-    protected editStrict: boolean;
+    app: App;
+    dao: BaseDao<E>;
+    editStrict: boolean;
 
-    protected time(date: any = new Date(), parse?): Time {
+    time(date: any = new Date(), parse?): Time {
         return new Time(date, parse);
     };
 
