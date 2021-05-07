@@ -20,12 +20,13 @@ export default class Utils {
                 break;
             }
             if (n[1] !== "any") {
+                let pass = true;
                 if (n[1] !== "array") {
-                    rs.success = typeof real[n[0]] === n[1];
+                    pass = typeof real[n[0]] === n[1];
                 } else {
-                    rs.success = Array.isArray(real[n[0]]);
+                    pass = Array.isArray(real[n[0]]);
                 }
-                if (rs.success === false) {
+                if (pass === false) {
                     rs.set224(`${n[0]}类型应为${n[1]}`);
                     break;
                 }
