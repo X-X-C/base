@@ -62,7 +62,7 @@ export default class TopService extends BaseService<any> {
         } = {}
     ): Promise<result> {
         let r = this.getResult();
-        if (mixNick === this.nick) {
+        if (mixNick === this.mixNick) {
             this.cacheRun;
         }
         r.data = await this.invoke(
