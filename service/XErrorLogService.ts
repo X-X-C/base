@@ -18,6 +18,7 @@ export default class XErrorLogService extends BaseService<ErrorLog> {
         errorLog.time = this.time().common.base;
         errorLog.params = this.response.params;
         errorLog.desc = Utils.insertClean(e);
+        errorLog.activityId = this.activityId;
         switch (e.code) {
             case 501:
                 errorLog.level = "logic";

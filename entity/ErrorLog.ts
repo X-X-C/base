@@ -1,6 +1,8 @@
 export default class ErrorLog {
     //错误信息
     message: any = "";
+    //活动ID
+    activityId: string;
     //错误API
     api: string;
     //请求参数
