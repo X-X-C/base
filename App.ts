@@ -77,7 +77,7 @@ export default class App {
                 ...this.config.runNeedParams
             }
             result = Utils.checkNeed(params, needParams);
-            if (result.success !== BaseResult.STATUS_SUCCESS) return result;
+            if (result.code !== BaseResult.STATUS_SUCCESS) return result;
             //重置运行参数
             this.runNeedParams = {};
             await this.before.run();
