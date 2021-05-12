@@ -3,8 +3,10 @@ import BaseResult from "./dto/BaseResult";
 import XErrorLogService from "./service/XErrorLogService";
 import ServiceManager from "./service/abstract/ServiceManager";
 import XSpmService from "./service/XSpmService";
-import XActivityService from "./service/XActivityService";
+import XActivityService, {activityData} from "./service/XActivityService";
 import Spm from "./entity/Spm";
+import ActivityInfoService from "./service/ActivityInfoService";
+import ActivityInfo from "./entity/ActivityInfo";
 
 export default class App {
 
@@ -161,6 +163,23 @@ export class XBefore {
                 app.response.set223();
                 app.status = 0;
             }
+        }
+    }
+
+    globalActivityInfo() {
+        this.globalActivity();
+        this.addBefore = async (app: App) => {
+            let {activityId} = app.context.data;
+            let activityInfoService = app.getService(ActivityInfoService);
+            let activityInfo = await activityInfoService.get({
+                activityId
+            })
+            if (!activityInfo) {
+                activityInfo = new ActivityInfo();
+                activityInfo.activityId = activityId;
+                activityInfo._id = await activityInfoService.insertOne(activityInfo);
+            }
+            app.globalActivity.activityInfo = activityInfo;
         }
     }
 }

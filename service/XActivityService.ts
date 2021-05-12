@@ -1,5 +1,13 @@
 import BaseService from "./abstract/BaseService";
 import App from "../App";
+import ActivityInfo from "../entity/ActivityInfo";
+
+
+export type activityData = {
+    code: number,
+    data: activity,
+    activityInfo?: ActivityInfo
+}
 
 export default class XActivityService extends BaseService<activity> {
     constructor(app: App) {

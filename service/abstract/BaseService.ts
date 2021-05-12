@@ -197,17 +197,19 @@ export default class BaseService<E extends other> {
     }
 
 
-    stockInfo(prize: configPrize) {
-        let grant = this.globalActivity.data.data.grantTotal;
+    stockInfo(prize: configPrize): stockInfo {
+        let grant = this.globalActivity.activityInfo;
         let rs = {
             done: 0,
-            restStock: false
+            restStock: false,
+            prizeId: prize.id,
+            dayStock: !!prize.dayStock
         }
         if (prize.dayStock === true) {
             let time = this.time().common.YYYYMMDD;
             rs.done = grant?.dayStock?.[prize.id]?.[time] || 0;
         } else {
-            rs.done = grant?.[prize.id] || 0;
+            rs.done = grant?.stock?.[prize.id] || 0;
         }
         rs.restStock = rs.done < prize.stock
         return rs;

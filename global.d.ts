@@ -1,8 +1,3 @@
-type activityData = {
-    code: number,
-    data: activity
-}
-
 interface activity {
     _id: string,
     title: string,
@@ -87,4 +82,12 @@ interface other {
 
 interface checkType {
     [key: string]: "number" | "array" | "string" | "object" | "boolean" | "any"
+}
+
+
+type stockInfo = {
+    done: number,
+    restStock: boolean,
+    prizeId: string,
+    dayStock: boolean
 }

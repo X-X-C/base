@@ -9,12 +9,25 @@ export default class BaseEntity {
 
     _id: string;
     _: this;
+    _tempThis: this;
     _data: {
         compareParam?: {
             arr: "allMatch" | "allReplace",
             num: "set" | "inc",
         },
         clazz?
+    }
+
+    get tempThis() {
+        return this._tempThis;
+    }
+
+    get tempThisCommit() {
+        this._tempThis = this.pure;
+        if (this._data_.clazz) {
+            this._tempThis = new this._data_.clazz().init(this._tempThis, false);
+        }
+        return;
     }
 
     get _data_() {
@@ -38,10 +51,11 @@ export default class BaseEntity {
             arr: "allMatch",
             num: "inc"
         }
-        this._ = Utils.deepClone(this);
+        this._ = this.pure;
         if (this._data_.clazz) {
             this._ = new this._data_.clazz().init(this._, false);
         }
+        this.tempThisCommit;
         return;
     }
 
@@ -66,10 +80,8 @@ export default class BaseEntity {
     }
 
     get optionsEnd() {
-        let {deepClone, compareObj} = Utils;
-        let cur = deepClone(this);
-        delete cur._;
-        delete cur._data;
+        let {compareObj} = Utils;
+        let cur = this.pure;
         return compareObj(this._, cur, {
             arrayHandle: this.compareParam.arr,
             numberHandle: this.compareParam.num
@@ -78,12 +90,8 @@ export default class BaseEntity {
 
     get optionsBack() {
         let {deepClone, compareObj} = Utils;
-        let cur = deepClone(this);
-        delete cur._;
-        delete cur._data;
+        let cur = this.pure;
         let _ = deepClone(this._);
-        delete _._data;
-        delete _._;
         return compareObj(cur, _, {
             arrayHandle: this.compareParam.arr,
             numberHandle: this.compareParam.num
@@ -97,10 +105,6 @@ export default class BaseEntity {
     }
 
     get pure() {
-        return this.getPure();
-    }
-
-    getPure() {
         let e = Utils.deepClone(this);
         for (const k in e) {
             if (k[0] === "_" && k !== "_id") {
