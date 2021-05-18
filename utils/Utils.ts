@@ -276,20 +276,17 @@ export default class Utils {
      * @param arr
      */
     static cleanObjArr(arr: object[]): number {
-        let delArr = [];
         if (arr.length > 0) {
             arr.forEach((v, k) => {
                 Utils.cleanObj(arr[k]);
                 if (Utils.isBlank(arr[k])) {
-                    delArr.push(k);
+                    arr[k] = undefined;
                 }
             })
         }
-        if (delArr.length > 0) {
-            for (let k of delArr) {
-                arr.splice(k, 1);
-            }
-        }
+        let tmp = arr.filter(v => v !== undefined);
+        arr.length = 0;
+        arr.push(...tmp);
         return arr.length;
     }
 
