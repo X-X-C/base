@@ -239,4 +239,8 @@ export default class BaseService<E extends other> {
     async simpleSpm(type, data?, ext?) {
         await this.app.addSimpleSpm(type, data, ext);
     }
+
+    async spmPv(){
+        await this.app.spmService.spmPv();
+    }
 }

@@ -7,6 +7,13 @@ export default class XSpmService extends BaseService<Spm> {
         super(app, "spm");
     }
 
+    async spmPv() {
+        this.dao.initTb("spm_pv");
+        let spm = await this.bean("PV");
+        await this.insertOne(spm);
+        this.dao.initTb("spm")
+    }
+
     /**
      * 获取spm bean
      * @param type
