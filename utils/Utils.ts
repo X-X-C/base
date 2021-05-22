@@ -481,4 +481,8 @@ export default class Utils {
         }
         return max;
     }
+
+    static formatNum(number) {
+        return number >= 0 ? "+" + number : number
+    }
 }
