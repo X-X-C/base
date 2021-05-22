@@ -163,6 +163,7 @@ export default class TopService extends BaseService<any> {
             start_created: startTime,
             end_created: endTime,
             page_no: page,
+            type: "guarantee_trade,auto_delivery,ec,cod,step,tmall_i18n",
             ...extParams
         }, {
             ext
