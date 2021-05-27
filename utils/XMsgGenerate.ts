@@ -14,11 +14,8 @@ export default {
      */
     baseInfo(who, what, target, desc, time = new Time()) {
         let msg = [];
-        msg.push(`【${who}】`);
-        msg.push(`在`);
-        msg.push(`【${time.common.base}】`);
-        msg.push(target ? `【${target}】` : "");
-        msg.push(desc ? toJson(desc) : "");
-        return msg.join("，");
+        msg.push(`【${who}】在【${time.common.base}】${what}${target ? `【${target}】` : ""}`);
+        !desc || msg.push(toJson(desc));
+        return msg.join("，") + "。";
     }
 }
