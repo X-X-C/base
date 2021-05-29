@@ -306,6 +306,10 @@ export default class Utils {
         return obj;
     }
 
+    static isNumber(any: any) {
+        return !isNaN(any) && typeof any === "number";
+    }
+
     static toJson(any): string {
         return JSON.stringify(any).replace(/"/g, "");
     }
