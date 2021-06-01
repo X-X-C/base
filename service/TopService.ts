@@ -157,7 +157,7 @@ export default class TopService extends BaseService<any> {
             this.cacheRun;
         }
         return await this.invoke("taobao.open.trades.sold.get", {
-            fields: "tid,type,status,payment,orders,rx_audit_status",
+            fields: "tid,type,status,payment,orders,rx_audit_status,pay_time,created",
             page_size: 100,
             buyer_open_id: openId,
             start_created: startTime,
