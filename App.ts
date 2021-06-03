@@ -16,6 +16,13 @@ export default class App {
         this.status = 1;
     }
 
+    static exports: {
+        [key: string]: {
+            constructor,
+            params
+        }
+    } = {}
+
     services: ServiceManager;
     before: XBefore;
     config = {

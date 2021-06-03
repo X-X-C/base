@@ -15,6 +15,8 @@ export default class BaseService<E extends other> {
         }
     }
 
+    static init;
+
     app: App;
     dao: BaseDao<E>;
     editStrict: boolean;
@@ -240,7 +242,7 @@ export default class BaseService<E extends other> {
         await this.app.addSimpleSpm(type, data, ext);
     }
 
-    async spmPv(){
+    async spmPv() {
         await this.app.spmService.spmPv();
     }
 }
