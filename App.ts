@@ -19,7 +19,9 @@ export default class App {
     static exports: {
         [key: string]: {
             constructor,
-            params
+            params: checkType,
+            needGlobalParam?: boolean,
+            [k: string]: any
         }
     } = {}
 
