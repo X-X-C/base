@@ -21,6 +21,7 @@ export default class App {
             constructor,
             params: checkType,
             needGlobalParam?: boolean,
+            before: Function[]
             [k: string]: any
         }
     } = {}
@@ -125,7 +126,7 @@ export class XBefore {
 
     before: Function[] = [];
 
-    set addBefore(v) {
+    protected set addBefore(v) {
         if (!this.before.find(v1 => v1.toString() === v.toString())) {
             this.before.push(v);
         }
@@ -193,3 +194,6 @@ export class XBefore {
     }
 }
 
+export {
+    App as XApp
+}
