@@ -26,8 +26,10 @@ export function ignoreGlobalParam() {
 
 export function before(...beforeFn: Function[]) {
     return (t, k) => {
-        beforeFn = [...new Set(beforeFn)];
-        beforeFn = beforeFn.filter(v => !App.exports[k].before.find(v1 => v1 === v));
-        App.exports[k].before.push(...beforeFn);
+        if (App.exports[k]) {
+            beforeFn = [...new Set(beforeFn)];
+            beforeFn = beforeFn.filter(v => !App.exports[k].before.find(v1 => v1 === v));
+            App.exports[k].before.push(...beforeFn);
+        }
     }
 }
