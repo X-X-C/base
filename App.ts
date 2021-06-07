@@ -16,15 +16,7 @@ export default class App {
         this.status = 1;
     }
 
-    static exports: {
-        [key: string]: {
-            constructor,
-            params: checkType,
-            needGlobalParam?: boolean,
-            before: Function[]
-            [k: string]: any
-        }
-    } = {}
+    static exports: exp = {}
 
     services: ServiceManager;
     before: XBefore;

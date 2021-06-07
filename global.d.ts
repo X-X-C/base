@@ -91,3 +91,15 @@ type stockInfo = {
     prizeId: string,
     dayStock: boolean
 }
+
+
+interface exp {
+    [k: string]: {
+        constructor,
+        params: checkType,
+        needGlobalParam?: boolean,
+        before: Function[]
+        [k: string]: any
+    }
+
+}
