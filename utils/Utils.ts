@@ -69,6 +69,19 @@ export default class Utils {
         }
     }
 
+    static formatDateToBase(date:Date){
+        function formatNum(number){
+            return number > 9 ? number : "0" + number;
+        }
+        let year = date.getFullYear();
+        let month = formatNum(date.getMonth() + 1);
+        let day = formatNum(date.getDate());
+        let hours = formatNum(date.getHours());
+        let minutes = formatNum(date.getMinutes());
+        let seconds = formatNum(date.getSeconds());
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
     /**
      * 将excelBuffer转换为json
      * @param buffer
@@ -82,11 +95,11 @@ export default class Utils {
     }): any[] {
         let workbook = xlsx.read(buffer, {
             type: "buffer",
-            sheetRows: 2,
             cellDates: true
         });
         let sheet = workbook.Sheets[workbook.SheetNames[who]];
-        let firstLine: any = xlsx.utils.sheet_to_json(sheet)[0];
+        let rs = xlsx.utils.sheet_to_json(sheet);
+        let firstLine: any = rs[0];
         //定义了表头，检查字段
         if (!Utils.isBlank(defineHeader)) {
             //表头数组
@@ -113,12 +126,6 @@ export default class Utils {
                 convertFields.date.push(e[0]);
             }
         }
-        //读取文件
-        workbook = xlsx.read(buffer, {
-            type: "buffer"
-        });
-        sheet = workbook.Sheets[workbook.SheetNames[who]];
-        let rs = xlsx.utils.sheet_to_json(sheet);
         if (!Utils.isBlank(defineHeader)) {
             //映射对应的键
             rs = rs.map(v => {
@@ -132,7 +139,7 @@ export default class Utils {
                     }
                     //日期字段
                     else if (convertFields.date.indexOf(targetKey) !== -1) {
-                        targetV = Utils.parseExcelDate(targetV)
+                        targetV = Utils.formatDateToBase(targetV)
                     }
                     o[key] = targetV;
                 }
