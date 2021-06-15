@@ -18,6 +18,25 @@ export default class App {
 
     static exports: exp = {}
 
+    static initExpose(clazz: new(...args: any) => App) {
+        let expose = {};
+        for (let entry of Object.entries(App.exports)) {
+            // @ts-ignore
+            expose[entry[0]] = async (context) => {
+                const app = new clazz(context, entry[0]);
+                app.runNeedParams = entry[1].params || {};
+                if (!entry[1].needGlobalParam) {
+                    app.globalNeedParams = {};
+                }
+                entry[1].before.forEach(v => v.call(app.before))
+                return await app.run(async function () {
+                    await app.getService(entry[1].constructor)[entry[0]]();
+                });
+            }
+        }
+        return expose;
+    }
+
     services: ServiceManager;
     before: XBefore;
     config = {
