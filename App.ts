@@ -23,7 +23,11 @@ export default class App {
     static initExpose(clazz: new(...args: any) => App, targetExports, modulePath: string = "src/service") {
         const pattern = /\.ts$/i;
         const trulyPathPrefix = path.relative(__dirname, ".")
-        Utils.findFiles(modulePath).forEach(v =>
+        Utils.findFiles(modulePath, {
+            exclude: [/\.d\.ts$/i],
+            pattern: [pattern],
+            excludeDir: [/node_modules/]
+        }).forEach(v =>
             // @ts-ignore
             require(path.join(trulyPathPrefix, v.replace(pattern, "")))
         );

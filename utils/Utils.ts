@@ -502,7 +502,11 @@ export default class Utils {
         return number >= 0 ? "+" + number : number
     }
 
-    static findFiles(startPath, pattern = /(\.ts$)/i) {
+    static findFiles(startPath, {
+        pattern = [] as RegExp[],
+        exclude = [] as RegExp[],
+        excludeDir = [] as RegExp[]
+    } = {}) {
         let stats = fs.statSync(startPath);
         let files = [];
         if (stats.isDirectory()) {
@@ -510,10 +514,14 @@ export default class Utils {
             for (let string of strings) {
                 let newPath = path.join(startPath, string);
                 let stats = fs.statSync(newPath);
-                if (stats.isDirectory()) {
-                    files = files.concat(Utils.findFiles(newPath));
+                if (stats.isDirectory() && excludeDir.every(v=>!v.test(string))) {
+                    files = files.concat(Utils.findFiles(newPath, {
+                        pattern,
+                        exclude,
+                        excludeDir
+                    }));
                 } else {
-                    if (pattern.test(string)) {
+                    if (pattern.every(v=>v.test(string)) && exclude.every(v=>!v.test(string))) {
                         files.push(newPath);
                     }
                 }
