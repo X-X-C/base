@@ -8,11 +8,14 @@
     },
     "sdkVersion": "*",
     "dependencies": {
-        "randombyweights": "*",
-        "xlsx": "*",
-        "moment-timezone": "*",
+        "gm-spm": "*",
         "gmtaobao": "*",
-        "qr-image": "*"
+        "moment-timezone": "*",
+        "qr-image": "*",
+        "randombyweights": "*",
+        "uuid": "*",
+        "xlsx": "*",
+        "reflect-metadata": "*"
     },
     "author": "",
     "license": "ISC"
