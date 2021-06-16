@@ -18,11 +18,9 @@ export default class App {
 
     static exports: exp = {}
 
-    static initExpose(clazz: new(...args: any) => App) {
-        let expose = {};
+    static initExpose(clazz: new(...args: any) => App, targetExports) {
         for (let entry of Object.entries(App.exports)) {
-            // @ts-ignore
-            expose[entry[0]] = async (context) => {
+            targetExports[entry[0]] = async (context) => {
                 const app = new clazz(context, entry[0]);
                 app.runNeedParams = entry[1].params || {};
                 if (!entry[1].needGlobalParam) {
@@ -34,7 +32,6 @@ export default class App {
                 });
             }
         }
-        return expose;
     }
 
     services: ServiceManager;
