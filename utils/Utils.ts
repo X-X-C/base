@@ -6,6 +6,10 @@ import * as randombyweights from "randombyweights";
 import * as uuid from "uuid";
 // @ts-ignore
 import * as qr from "qr-image";
+// @ts-ignore
+import * as fs from "fs";
+// @ts-ignore
+import * as path from "path";
 import BaseResult from "../dto/BaseResult";
 import Time from "./Time";
 
@@ -69,10 +73,11 @@ export default class Utils {
         }
     }
 
-    static formatDateToBase(date:Date){
-        function formatNum(number){
+    static formatDateToBase(date: Date) {
+        function formatNum(number) {
             return number > 9 ? number : "0" + number;
         }
+
         let year = date.getFullYear();
         let month = formatNum(date.getMonth() + 1);
         let day = formatNum(date.getDate());
@@ -495,5 +500,25 @@ export default class Utils {
 
     static formatNum(number) {
         return number >= 0 ? "+" + number : number
+    }
+
+    static findFiles(startPath, pattern = /(\.ts$)/i) {
+        let stats = fs.statSync(startPath);
+        let files = [];
+        if (stats.isDirectory()) {
+            let strings = fs.readdirSync(startPath);
+            for (let string of strings) {
+                let newPath = path.join(startPath, string);
+                let stats = fs.statSync(newPath);
+                if (stats.isDirectory()) {
+                    files = files.concat(Utils.findFiles(newPath));
+                } else {
+                    if (pattern.test(string)) {
+                        files.push(newPath);
+                    }
+                }
+            }
+        }
+        return files;
     }
 }

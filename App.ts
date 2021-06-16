@@ -7,6 +7,8 @@ import XActivityService, {activityData} from "./service/XActivityService";
 import Spm from "./entity/Spm";
 import ActivityInfoService from "./service/ActivityInfoService";
 import ActivityInfo from "./entity/ActivityInfo";
+// @ts-ignore
+import * as path from "path";
 
 export default class App {
 
@@ -18,7 +20,13 @@ export default class App {
 
     static exports: exp = {}
 
-    static initExpose(clazz: new(...args: any) => App, targetExports) {
+    static initExpose(clazz: new(...args: any) => App, targetExports, modulePath: string = "src/service") {
+        const pattern = /\.ts$/i;
+        const trulyPathPrefix = path.relative(__dirname, ".")
+        Utils.findFiles(modulePath).forEach(v =>
+            // @ts-ignore
+            require(path.join(trulyPathPrefix, v.replace(pattern, "")))
+        );
         for (let entry of Object.entries(App.exports)) {
             targetExports[entry[0]] = async (context) => {
                 const app = new clazz(context, entry[0]);
