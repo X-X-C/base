@@ -66,6 +66,10 @@ export default class BaseService<E extends other> {
         return this.app.globalActivity;
     }
 
+    get env(){
+        return this.context.env;
+    }
+
 
     getService<C extends { [prop: string]: any }>(target: (new (...args) => C)): C {
         if (this.app.services instanceof ServiceManager) {

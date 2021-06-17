@@ -22,6 +22,7 @@ export default class App {
 
     static initExpose(clazz: new(...args: any) => App, targetExports, modulePath: string = "src/service") {
         const pattern = /\.ts$/i;
+        // @ts-ignore
         const trulyPathPrefix = path.relative(__dirname, ".")
         Utils.findFiles(modulePath, {
             exclude: [/\.d\.ts$/i],
@@ -33,7 +34,7 @@ export default class App {
         );
         for (let entry of Object.entries(App.exports)) {
             targetExports[entry[0]] = async (context) => {
-                const app = new clazz(context, entry[0]);
+                const app = new clazz(context || {}, entry[0]);
                 app.runNeedParams = entry[1].params || {};
                 if (!entry[1].needGlobalParam) {
                     app.globalNeedParams = {};

@@ -7,7 +7,7 @@ export default class BaseDao<T> {
 
     initTb(table) {
         try {
-            this.db = this.context.cloud.db.collection(table);
+            this.db = this.context?.cloud?.db?.collection(table);
         } catch (e) {
             throw "获取数据库连接失败";
         }
