@@ -106,7 +106,7 @@ export default class Utils {
         let rs = xlsx.utils.sheet_to_json(sheet);
         let firstLine: any = rs[0];
         //定义了表头，检查字段
-        if (!Utils.isBlank(defineHeader)) {
+        if (defineHeader) {
             //表头数组
             let header = Object.keys(firstLine);
             //是否缺少字段
@@ -117,41 +117,30 @@ export default class Utils {
                 throw Error(`缺少字段[${v}]`);
             });
         }
-        //获取需要转换字段
-        let convertFields = {
-            num: [],
-            date: []
-        }
-        firstLine = Object.entries(firstLine);
-        for (const e of firstLine) {
-            if (typeof e[1] === "number") {
-                convertFields.num.push(e[0]);
-            }
-            if (e[1] instanceof Date) {
-                convertFields.date.push(e[0]);
-            }
-        }
-        if (!Utils.isBlank(defineHeader)) {
-            //映射对应的键
-            rs = rs.map(v => {
-                let o = {};
+        return rs.map(v => {
+            let o = {};
+            if (defineHeader) {
                 for (let key in defineHeader) {
-                    let targetKey = defineHeader[key];
-                    let targetV = v[targetKey];
-                    //数字字段，转换为字符串
-                    if (convertFields.num.indexOf(targetKey) !== -1) {
-                        targetV = String(targetV);
+                    if (v[defineHeader[key]]) {
+                        o[key] = v[defineHeader[key]];
                     }
-                    //日期字段
-                    else if (convertFields.date.indexOf(targetKey) !== -1) {
-                        targetV = Utils.formatDateToBase(targetV)
-                    }
-                    o[key] = targetV;
                 }
-                return o;
-            });
-        }
-        return rs;
+            } else {
+                o = v;
+            }
+            for (let k in o) {
+                let v = o[k];
+                //处理数字
+                if (typeof v === "number") {
+                    o[k] = o[k] + "";
+                }
+                //处理日期
+                else if (v instanceof Date) {
+                    o[k] = Utils.formatDateToBase(v);
+                }
+            }
+            return o;
+        });
     }
 
     /**
@@ -514,14 +503,14 @@ export default class Utils {
             for (let string of strings) {
                 let newPath = path.join(startPath, string);
                 let stats = fs.statSync(newPath);
-                if (stats.isDirectory() && excludeDir.every(v=>!v.test(string))) {
+                if (stats.isDirectory() && excludeDir.every(v => !v.test(string))) {
                     files = files.concat(Utils.findFiles(newPath, {
                         pattern,
                         exclude,
                         excludeDir
                     }));
                 } else {
-                    if (pattern.every(v=>v.test(string)) && exclude.every(v=>!v.test(string))) {
+                    if (pattern.every(v => v.test(string)) && exclude.every(v => !v.test(string))) {
                         files.push(newPath);
                     }
                 }
