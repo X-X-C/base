@@ -95,9 +95,9 @@ export default class Utils {
      * @param ext
      */
     static parseExcel(buffer, {
-        defineHeader = {},
+        defineHeader = null as any,
         who = 0
-    }): any[] {
+    } = {}): any[] {
         let workbook = xlsx.read(buffer, {
             type: "buffer",
             cellDates: true
