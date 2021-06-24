@@ -2,14 +2,12 @@ import BaseService from "./abstract/BaseService";
 import Spm from "../entity/Spm";
 import App from "../App";
 
-export default class XSpmService<A extends App = App, S extends Spm = Spm> extends BaseService<S> {
+export default class XSpmService<A extends App = App> extends BaseService<Spm> {
     constructor(app: A) {
         super(app, "spm");
     }
 
-    spmBean: new() => S;
-
-    async spmPv() {
+    async spmPv(): Promise<Spm> {
         this.dao.initTb("spm_pv");
         let spm = await this.bean("PV");
         await this.insertOne(spm);
@@ -18,7 +16,7 @@ export default class XSpmService<A extends App = App, S extends Spm = Spm> exten
     }
 
     simpleBean(type: string) {
-        let spm = new this.spmBean();
+        let spm = new Spm();
         spm.activityId = this.activityId;
         spm.date = this.time().format("YYYY-MM-DD");
         spm.nick = this.context.userNick || "";
@@ -33,7 +31,7 @@ export default class XSpmService<A extends App = App, S extends Spm = Spm> exten
         return spm;
     }
 
-    async bean(type: string, coverData?: any) {
+    async bean(type: string, coverData?: any): Promise<Spm> {
         let spm = this.simpleBean(type);
         spm.cover(coverData);
         //天index
@@ -50,5 +48,24 @@ export default class XSpmService<A extends App = App, S extends Spm = Spm> exten
             activityId: this.activityId
         })) + 1;
         return spm;
+    }
+
+    setTask(type: string = "normal") {
+        this.data.isTask = true;
+        this.data.taskType = type;
+        return this;
+    }
+
+    setNormalTask() {
+        this.setTask();
+        return this;
+    }
+
+    setAssistTask(user, vipData, code) {
+        this.setTask("assist");
+        this.data.user = user;
+        this.data.vipTime = vipData?.data?.gmt_create || false;
+        this.data.code = code;
+        return this;
     }
 }
