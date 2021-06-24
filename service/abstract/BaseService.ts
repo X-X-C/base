@@ -15,8 +15,6 @@ export default class BaseService<E extends other> {
         }
     }
 
-    static init;
-
     app: App;
     dao: BaseDao<E>;
     editStrict: boolean;
@@ -66,7 +64,7 @@ export default class BaseService<E extends other> {
         return this.app.globalActivity;
     }
 
-    get env(){
+    get env() {
         return this.context.env;
     }
 
@@ -238,15 +236,15 @@ export default class BaseService<E extends other> {
         return await this.dao.uploadFile(buffer, fileName);
     }
 
-    async spm(type, data?, ext?) {
-        await this.app.addSpm(type, data, ext);
+    async spm(type: string, coverData?: any) {
+        return await this.app.addSpm(type, coverData);
     }
 
-    async simpleSpm(type, data?, ext?) {
-        await this.app.addSimpleSpm(type, data, ext);
+    simpleSpm(type) {
+        return this.app.addSimpleSpm(type);
     }
 
     async spmPv() {
-        await this.app.spmService.spmPv();
+        return await this.app.spmService.spmPv();
     }
 }

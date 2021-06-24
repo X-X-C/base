@@ -78,16 +78,16 @@ export default class App {
         return this.getService(XSpmService);
     }
 
-    async addSpm(type, data?, ext?) {
-        this.spmBeans.push(
-            await this.spmService.bean(type, data, ext)
-        );
+    async addSpm(type, coverData) {
+        let spm = await this.spmService.bean(type, coverData);
+        this.spmBeans.push(spm);
+        return spm;
     }
 
-    async addSimpleSpm(type, data?, ext?) {
-        this.spmBeans.push(
-            await this.spmService.simpleBean(type, data, ext)
-        );
+    addSimpleSpm(type) {
+        let spm = this.spmService.simpleBean(type);
+        this.spmBeans.push(spm);
+        return spm;
     }
 
     db(tb: string) {
