@@ -2,8 +2,8 @@ import BaseService from "./abstract/BaseService";
 import ActivityInfo from "../entity/ActivityInfo";
 import App from "../App";
 
-export default class ActivityInfoService extends BaseService<ActivityInfo> {
-    constructor(app: App) {
+export default class ActivityInfoService<A extends App = App> extends BaseService<ActivityInfo, A> {
+    constructor(app: A) {
         super(app, "activityInfo");
     }
 

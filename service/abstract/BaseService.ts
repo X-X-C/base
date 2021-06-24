@@ -5,8 +5,8 @@ import App from "../../App";
 import BaseResult from "../../dto/BaseResult";
 import BaseDao from "../../dao/BaseDao";
 
-export default class BaseService<E extends other> {
-    constructor(app: App, tb?: string) {
+export default class BaseService<E extends other, A extends App = App> {
+    constructor(app: A, tb?: string) {
         this.dao = new BaseDao(app.context);
         this.app = app;
         this.editStrict = true;
@@ -15,7 +15,7 @@ export default class BaseService<E extends other> {
         }
     }
 
-    app: App;
+    app: A;
     dao: BaseDao<E>;
     editStrict: boolean;
 
