@@ -49,23 +49,4 @@ export default class XSpmService<A extends App = App> extends BaseService<Spm> {
         })) + 1;
         return spm;
     }
-
-    setTask(type: string = "normal") {
-        this.data.isTask = true;
-        this.data.taskType = type;
-        return this;
-    }
-
-    setNormalTask() {
-        this.setTask();
-        return this;
-    }
-
-    setAssistTask(user, vipData, code) {
-        this.setTask("assist");
-        this.data.user = user;
-        this.data.vipTime = vipData?.data?.gmt_create || false;
-        this.data.code = code;
-        return this;
-    }
 }
