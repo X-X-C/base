@@ -16,9 +16,11 @@ export function exp(params?: checkType) {
 }
 
 
-export function ignoreGlobalParam(t, k) {
-    if (App.exports[k]) {
-        App.exports[k].needGlobalParam = false;
+export function ignoreGlobalParam() {
+    return function (t, k) {
+        if (App.exports[k]) {
+            App.exports[k].needGlobalParam = false;
+        }
     }
 }
 

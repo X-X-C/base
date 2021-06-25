@@ -47,10 +47,10 @@ interface configPrize {
 }
 
 
-interface result {
+interface result<E = any> {
     code?: number,
     message?: string,
-    data?: any,
+    data?: E,
 
     [props: string]: any
 }
