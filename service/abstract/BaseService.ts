@@ -203,7 +203,7 @@ export default class BaseService<E extends other = any, A extends App = App> {
 
     stockInfo(prize: configPrize): stockInfo {
         let grant = this.globalActivity.activityInfo;
-        let rs = {
+        let rs: stockInfo = {
             done: 0,
             restStock: false,
             prizeId: prize.id,
@@ -211,11 +211,19 @@ export default class BaseService<E extends other = any, A extends App = App> {
         }
         if (prize.dayStock === true) {
             let time = this.time().common.YYYYMMDD;
-            rs.done = grant?.dayStock?.[prize.id]?.[time] || 0;
+            let curDone = grant?.dayStock?.[prize.id]?.[time] || 0;
+            let stocks = grant?.dayStock?.[prize.id] || {};
+            let allDone: any = 0;
+            if (Object.values(stocks).length > 0) {
+                allDone = Object.values(stocks).reduce((a: number, b: number) => a + b);
+            }
+            rs.done = allDone;
+            rs.dayDone = curDone;
+            rs.restStock = curDone < prize.dayStockLimit && allDone < prize.stock;
         } else {
             rs.done = grant?.stock?.[prize.id] || 0;
+            rs.restStock = rs.done < prize.stock
         }
-        rs.restStock = rs.done < prize.stock
         return rs;
     }
 

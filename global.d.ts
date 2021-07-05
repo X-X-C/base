@@ -89,7 +89,8 @@ type stockInfo = {
     done: number,
     restStock: boolean,
     prizeId: string,
-    dayStock: boolean
+    dayStock: boolean,
+    dayDone?: number
 }
 
 

@@ -9,30 +9,29 @@ export default class ActivityInfoService<A extends App = App> extends BaseServic
 
     //更新库存
     async updateStock(stockInfo: stockInfo, changeCount: number) {
-        let field;
-        if (stockInfo.dayStock === true) {
-            let time = this.time().common.YYYYMMDD;
-            field = `dayStock.${stockInfo.prizeId}.${time}`;
-        } else {
-            field = `stock.${stockInfo.prizeId}`;
-        }
+        let time = this.time().common.YYYYMMDD;
+        let allField = `stock.${stockInfo.prizeId}`;
+        let dayField = `dayStock.${stockInfo.prizeId}.${time}`;
         let filter = {
             activityId: this.activityId,
             $or: [
                 {
-                    [field]: {
+                    [allField]: {
                         $exists: false
                     },
                 },
                 {
-                    [field]: stockInfo.done
+                    [allField]: stockInfo.done
                 }
             ]
         }
         let options = {
             $set: {
-                [field]: stockInfo.done + changeCount
+                [allField]: stockInfo.done + changeCount
             }
+        }
+        if (stockInfo.dayStock === true) {
+            options.$set[dayField] = stockInfo.dayDone + changeCount
         }
         return await this.edit(filter, options);
     }
