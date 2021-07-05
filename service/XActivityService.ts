@@ -9,8 +9,8 @@ export type activityData = {
     activityInfo?: ActivityInfo
 }
 
-export default class XActivityService extends BaseService<activity> {
-    constructor(app: App) {
+export default class XActivityService<A extends App = App> extends BaseService<activity, A> {
+    constructor(app: A) {
         super(app, "activities");
     }
 

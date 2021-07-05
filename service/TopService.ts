@@ -3,8 +3,8 @@ import App from "../App";
 import BaseService from "./abstract/BaseService";
 
 
-export default class TopService extends BaseService<any> {
-    constructor(app: App) {
+export default class TopService<A extends App = App> extends BaseService<any, A> {
+    constructor(app: A) {
         super(app);
     }
 

@@ -1,8 +1,8 @@
 import App from "../../App";
 
-export default class ServiceManager {
+export default class ServiceManager<A extends App = App> {
 
-    constructor(public app: App) {
+    constructor(public app: A) {
     }
 
     services = [];

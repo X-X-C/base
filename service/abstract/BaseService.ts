@@ -5,7 +5,7 @@ import App from "../../App";
 import BaseResult from "../../dto/BaseResult";
 import BaseDao from "../../dao/BaseDao";
 
-export default class BaseService<E extends other, A extends App = App> {
+export default class BaseService<E extends other = any, A extends App = App> {
     constructor(app: A, tb?: string) {
         this.dao = new BaseDao(app.context);
         this.app = app;
