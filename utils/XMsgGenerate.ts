@@ -14,10 +14,10 @@ export default {
      */
     baseInfo(who, what, target, desc, time = new Time()) {
         let msg = [];
-        msg.push(joinMsg([
-            `【${who}】在【${time.common.base}】${what}`,
-            trulyMsg(target, `【${target}】`),
-        ]));
+        msg.push(
+            `【${who}】在【${time.common.base}】${what}`
+            + trulyMsg(target, `【${target}】`)
+        );
         !desc || msg.push(toJson(desc));
         return msg.join("，") + "。";
     }
