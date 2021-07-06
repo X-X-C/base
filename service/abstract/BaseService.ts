@@ -212,14 +212,9 @@ export default class BaseService<E extends other = any, A extends App = App> {
         if (prize.dayStock === true) {
             let time = this.time().common.YYYYMMDD;
             let curDone = grant?.dayStock?.[prize.id]?.[time] || 0;
-            let stocks = grant?.dayStock?.[prize.id] || {};
-            let allDone: any = 0;
-            if (Object.values(stocks).length > 0) {
-                allDone = Object.values(stocks).reduce((a: number, b: number) => a + b);
-            }
-            rs.done = allDone;
+            rs.done = grant?.stock?.[prize.id] || 0;
             rs.dayDone = curDone;
-            rs.restStock = curDone < prize.dayStockLimit && allDone < prize.stock;
+            rs.restStock = curDone < prize.dayStockLimit && rs.done < prize.stock;
         } else {
             rs.done = grant?.stock?.[prize.id] || 0;
             rs.restStock = rs.done < prize.stock
