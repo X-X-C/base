@@ -1,7 +1,7 @@
 import Time from "../../base/utils/Time";
 import Utils from "../../base/utils/Utils";
 
-let {toJson} = Utils;
+let {toJson, isBlank} = Utils;
 
 export default {
     /**
@@ -18,4 +18,8 @@ export default {
         !desc || msg.push(toJson(desc));
         return msg.join("，") + "。";
     }
+}
+
+export function joinMsg(arr: string[]) {
+    return arr.filter(v => !isBlank(v)).join("，");
 }
