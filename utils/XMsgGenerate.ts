@@ -23,8 +23,8 @@ export default {
     }
 }
 
-export function joinMsg(arr: string[]) {
-    return arr.filter(v => !isBlank(v)).join("，");
+export function joinMsg(...strings: string[]) {
+    return strings.filter(v => !isBlank(v)).join("，");
 }
 
 export function trulyMsg(value, msg) {
