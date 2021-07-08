@@ -518,4 +518,25 @@ export default class Utils {
         }
         return files;
     }
+
+    static safeSetValue(obj: any, key: string, value: any) {
+        if (obj) {
+            let ks = key.split(".");
+            let v = obj;
+            while (ks.length > 0) {
+                let k = ks.shift();
+                if (ks.length === 0) {
+                    v[k] = value;
+                } else {
+                    if (v[k] === undefined) {
+                        v[k] = {}
+                    }
+                    if (typeof v[k] !== "object") {
+                        break;
+                    }
+                    v = v[k];
+                }
+            }
+        }
+    }
 }

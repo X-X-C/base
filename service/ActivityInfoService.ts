@@ -1,6 +1,9 @@
 import BaseService from "./abstract/BaseService";
 import ActivityInfo from "../entity/ActivityInfo";
 import App from "../App";
+import Utils from "../utils/Utils";
+
+const {safeSetValue} = Utils;
 
 export default class ActivityInfoService<A extends App = App> extends BaseService<ActivityInfo, A> {
     constructor(app: A) {
@@ -33,7 +36,16 @@ export default class ActivityInfoService<A extends App = App> extends BaseServic
         if (stockInfo.dayStock === true) {
             options.$set[dayField] = stockInfo.dayDone + changeCount
         }
-        return await this.edit(filter, options);
+        let line = await this.edit(filter, options);
+        if (line > 0) {
+            stockInfo.done += changeCount;
+            safeSetValue(this.globalActivity.activityInfo, allField, stockInfo.done)
+            if (stockInfo.dayStock === true) {
+                stockInfo.dayDone += changeCount;
+                safeSetValue(this.globalActivity.activityInfo, dayField, stockInfo.dayDone)
+            }
+        }
+        return line
     }
 
     //开奖
