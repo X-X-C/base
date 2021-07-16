@@ -87,13 +87,6 @@ export default class Utils {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
-    /**
-     * 将excelBuffer转换为json
-     * @param buffer
-     * @param defineHeader
-     * @param who  读取第几张表
-     * @param ext
-     */
     static parseExcel(parseData, {
         defineHeader = null as any,
         who = 0,
