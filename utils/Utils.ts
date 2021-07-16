@@ -103,44 +103,38 @@ export default class Utils {
             cellDates: true
         });
         let sheet = workbook.Sheets[workbook.SheetNames[who]];
-        let rs = xlsx.utils.sheet_to_json(sheet);
-        let firstLine: any = rs[0];
-        //定义了表头，检查字段
+        let rs = xlsx.utils.sheet_to_json(sheet, {
+            header: 1
+        });
+        let firstLine: any = rs.splice(0, 1)[0] || [];
+        let indexMap = {};
         if (defineHeader) {
-            //表头数组
-            let header = Object.keys(firstLine);
-            //是否缺少字段
-            Object.values(defineHeader).every((v: any) => {
-                if (header.indexOf(v) !== -1) {
-                    return true;
+            Object.entries(defineHeader).forEach(v => {
+                let index = firstLine.indexOf(v[1]);
+                if (index === -1) {
+                    throw "缺少字段" + v[1];
                 }
-                throw Error(`缺少字段[${v}]`);
-            });
+                indexMap[v[0]] = index;
+            })
+        } else {
+            firstLine.forEach((v, i) => {
+                indexMap[v] = i;
+            })
         }
         return rs.map(v => {
             let o = {};
-            if (defineHeader) {
-                for (let key in defineHeader) {
-                    if (v[defineHeader[key]]) {
-                        o[key] = v[defineHeader[key]];
-                    }
+            Object.entries(indexMap).forEach((i: any) => {
+                let value = v[i[1]];
+                //处理特殊值
+                if (typeof value === "number") {
+                    value = value + ""
+                } else if (value instanceof Date) {
+                    value = Utils.formatDateToBase(value);
                 }
-            } else {
-                o = v;
-            }
-            for (let k in o) {
-                let v = o[k];
-                //处理数字
-                if (typeof v === "number") {
-                    o[k] = o[k] + "";
-                }
-                //处理日期
-                else if (v instanceof Date) {
-                    o[k] = Utils.formatDateToBase(v);
-                }
-            }
+                o[i[0]] = value;
+            })
             return o;
-        });
+        })
     }
 
     /**
