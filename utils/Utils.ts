@@ -94,12 +94,13 @@ export default class Utils {
      * @param who  读取第几张表
      * @param ext
      */
-    static parseExcel(buffer, {
+    static parseExcel(parseData, {
         defineHeader = null as any,
-        who = 0
+        who = 0,
+        type = "buffer" as 'base64' | 'binary' | 'buffer' | 'file' | 'array' | 'string'
     } = {}): any[] {
-        let workbook = xlsx.read(buffer, {
-            type: "buffer",
+        let workbook = xlsx.read(parseData, {
+            type,
             cellDates: true
         });
         let sheet = workbook.Sheets[workbook.SheetNames[who]];
